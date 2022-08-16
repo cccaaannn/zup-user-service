@@ -1,0 +1,16 @@
+package com.can.zupuserservice.core.result.abstracts;
+
+import lombok.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString(callSuper = true)
+public abstract class Result implements IResult {
+    private Boolean status;
+    private String message = "";
+
+    public Result(boolean status) {
+        this.status = status;
+    }
+}
