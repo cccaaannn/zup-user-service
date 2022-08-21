@@ -7,7 +7,7 @@ import lombok.*;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class SuccessDataResult<T> extends DataResult<T> implements IDataResult<T> {
-    public SuccessDataResult(String message, T data) {
+    public SuccessDataResult(T data, String message) {
         super(true, message, data);
     }
 
