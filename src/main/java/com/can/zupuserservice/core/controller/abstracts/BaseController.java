@@ -1,6 +1,6 @@
 package com.can.zupuserservice.core.controller.abstracts;
 
-import com.can.zupuserservice.core.result.abstracts.IResult;
+import com.can.zupuserservice.core.utilities.result.abstracts.IResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

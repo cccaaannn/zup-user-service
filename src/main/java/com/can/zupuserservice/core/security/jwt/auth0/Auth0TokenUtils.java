@@ -6,14 +6,15 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.can.zupuserservice.core.result.abstracts.DataResult;
-import com.can.zupuserservice.core.result.abstracts.Result;
-import com.can.zupuserservice.core.result.concretes.ErrorDataResult;
-import com.can.zupuserservice.core.result.concretes.ErrorResult;
-import com.can.zupuserservice.core.result.concretes.SuccessDataResult;
-import com.can.zupuserservice.core.result.concretes.SuccessResult;
+import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
+import com.can.zupuserservice.core.utilities.result.abstracts.Result;
+import com.can.zupuserservice.core.utilities.result.concretes.ErrorDataResult;
+import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
+import com.can.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
+import com.can.zupuserservice.core.utilities.result.concretes.SuccessResult;
 import com.can.zupuserservice.core.data.dto.AccessToken;
 import com.can.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -27,22 +28,40 @@ public class Auth0TokenUtils implements IJWTUtils {
     private final Long expiresAfter;
     private final JWTVerifier verifier;
     private String issuer = "SYSTEM";
+    private final ObjectMapper jacksonObjectMapper;
 
     public Auth0TokenUtils(Long expiresAfter, String secretKey) {
         this.expiresAfter = expiresAfter;
         this.algorithm = Algorithm.HMAC256(secretKey);
         verifier = JWT.require(algorithm).build();
+        jacksonObjectMapper = new ObjectMapper();
+        jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public Auth0TokenUtils(Long expiresAfter, String secretKey, String issuer) {
+        this(expiresAfter, secretKey);
         this.issuer = issuer;
-        this.expiresAfter = expiresAfter;
-        this.algorithm = Algorithm.HMAC256(secretKey);
-        verifier = JWT.require(algorithm).build();
     }
 
     @Override
-    public DataResult<AccessToken> generateToken(Map<String, Object> claims) {
+    public DataResult<AccessToken> generateTokenRaw(Map<String, Object> claims) {
+        try {
+            String token = JWT.create()
+                    .withIssuer(issuer)
+                    .withPayload(claims)
+                    .withExpiresAt(getExpirationDate())
+                    .sign(algorithm);
+            AccessToken accessToken = new AccessToken(token);
+            return new SuccessDataResult<>(accessToken);
+        }
+        catch (Exception e) {
+            return new ErrorDataResult<>(e.getMessage());
+        }
+    }
+
+    @Override
+    public <TokenPayloadType> DataResult<AccessToken> generateToken(TokenPayloadType tokenPayloadType) {
+        Map<String, Object> claims = jacksonObjectMapper.convertValue(tokenPayloadType, new TypeReference<Map<String, Object>>() {});
         try {
             String token = JWT.create()
                     .withIssuer(issuer)
@@ -86,11 +105,9 @@ public class Auth0TokenUtils implements IJWTUtils {
 
             Map<String, String> claims = new HashMap<>();
             for(Map.Entry<String, Claim> claim: jwt.getClaims().entrySet()) {
-                claims.put(claim.getKey(), claim.getValue().asString());
+                claims.put(claim.getKey(), claim.getValue() != null ? claim.getValue().toString(): null);
             }
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            TokenPayloadType tokenPayload = mapper.convertValue(claims, tokenPayloadType);
+            TokenPayloadType tokenPayload = jacksonObjectMapper.convertValue(claims, tokenPayloadType);
 
             return new SuccessDataResult<>(tokenPayload);
         }

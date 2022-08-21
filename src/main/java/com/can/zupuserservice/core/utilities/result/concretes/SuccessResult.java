@@ -1,6 +1,6 @@
-package com.can.zupuserservice.core.result.concretes;
+package com.can.zupuserservice.core.utilities.result.concretes;
 
-import com.can.zupuserservice.core.result.abstracts.*;
+import com.can.zupuserservice.core.utilities.result.abstracts.*;
 import lombok.*;
 
 @Data
