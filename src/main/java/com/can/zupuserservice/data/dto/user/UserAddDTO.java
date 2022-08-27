@@ -3,13 +3,13 @@ package com.can.zupuserservice.data.dto.user;
 import com.can.zupuserservice.core.aspects.annotations.StrongPassword;
 import com.can.zupuserservice.aspect.annotation.UniqueEmail;
 import com.can.zupuserservice.aspect.annotation.UniqueUsername;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
