@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public abstract class DataResult<T> extends Result implements IDataResult<T> {
+public class DataResult<T> extends Result implements IDataResult<T> {
     private T data = null;
 
     public DataResult(boolean status, String message, T data) {
@@ -21,4 +21,9 @@ public abstract class DataResult<T> extends Result implements IDataResult<T> {
     public DataResult(boolean status) {
         super(status);
     }
+
+    public Result toResult() {
+        return new Result(this.getStatus(), this.getMessage());
+    }
+
 }

@@ -6,7 +6,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-public abstract class Result implements IResult {
+public class Result implements IResult {
     private Boolean status;
     private String message = "";
 
