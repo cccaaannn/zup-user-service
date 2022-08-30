@@ -5,12 +5,15 @@ import com.can.zupuserservice.core.utilities.result.abstracts.Result;
 import com.can.zupuserservice.data.entity.Role;
 import com.can.zupuserservice.repository.RoleRepository;
 import com.can.zupuserservice.service.concretes.RoleService;
+import com.can.zupuserservice.utils.ReplaceCamelCase;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Optional;
 
+@DisplayNameGeneration(ReplaceCamelCase.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class RoleServiceTest {
 
     private RoleRepository roleRepository;
@@ -23,7 +26,7 @@ public class RoleServiceTest {
     }
 
     @Test
-    @DisplayName("Should get role by name")
+    @Order(1)
     void shouldGetRoleByName() {
         String roleName = "test1";
 
@@ -41,7 +44,7 @@ public class RoleServiceTest {
     }
 
     @Test
-    @DisplayName("Should get all roles")
+    @Order(2)
     void shouldGetAllRoles() {
         List<Role> roles = List.of(new Role(1L, "test1", "test1", null), new Role(1L, "test2", "test1", null));
         Mockito.when(roleRepository.findAll()).thenReturn(roles);
@@ -56,7 +59,7 @@ public class RoleServiceTest {
     }
 
     @Test
-    @DisplayName("Should not add role when role name is used before")
+    @Order(3)
     void shouldNotAddRoleWhenNameIsUsedBefore() {
         Optional<Role> existingRole = Optional.of(new Role(1L, "test1", "test1", null));
         Mockito.when(roleRepository.findByName("test1")).thenReturn(existingRole);
@@ -72,7 +75,7 @@ public class RoleServiceTest {
     }
 
     @Test
-    @DisplayName("Should add role")
+    @Order(4)
     void shouldAddRole() {
         Optional<Role> empty = Optional.empty();
         Mockito.when(roleRepository.findByName("test1")).thenReturn(empty);
