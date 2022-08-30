@@ -5,7 +5,6 @@ import com.can.zupuserservice.core.exception.ForbiddenException;
 import com.can.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
 import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
 import com.can.zupuserservice.data.dto.TokenPayload;
-import com.can.zupuserservice.data.entity.User;
 import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
 import com.can.zupuserservice.util.HeaderOperations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,8 @@ public class TokenUtilsService implements ITokenUtilsService {
     }
 
     @Override
-    public DataResult<User> verifyAndGetUser(AccessToken accessToken) {
-        return jwtUtils.verifyAndGetToken(accessToken, User.class);
+    public DataResult<TokenPayload> verifyAndGetUser(AccessToken accessToken) {
+        return jwtUtils.verifyAndGetToken(accessToken, TokenPayload.class);
     }
 
 }
