@@ -6,9 +6,9 @@ import com.can.zupuserservice.data.dto.TokenPayload;
 import com.can.zupuserservice.data.entity.User;
 
 public interface ITokenUtilsService {
-    DataResult<TokenPayload> getTokenPayload();
+    TokenPayload getTokenPayload();
 
-    DataResult<AccessToken> generateToken(TokenPayload tokenPayload);
+    AccessToken generateToken(TokenPayload tokenPayload);
 
-    DataResult<TokenPayload> verifyAndGetUser(AccessToken accessToken);
+    TokenPayload verifyAndGetUser(AccessToken accessToken);
 }

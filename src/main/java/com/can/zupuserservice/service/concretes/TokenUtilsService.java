@@ -25,7 +25,7 @@ public class TokenUtilsService implements ITokenUtilsService {
     }
 
     @Override
-    public DataResult<TokenPayload> getTokenPayload() {
+    public TokenPayload getTokenPayload() {
         String token = headerOperations.getToken();
         if (Objects.isNull(token)) {
             throw new ForbiddenException("Token is null");
@@ -34,12 +34,12 @@ public class TokenUtilsService implements ITokenUtilsService {
     }
 
     @Override
-    public DataResult<AccessToken> generateToken(TokenPayload tokenPayload) {
+    public AccessToken generateToken(TokenPayload tokenPayload) {
         return jwtUtils.generateToken(tokenPayload);
     }
 
     @Override
-    public DataResult<TokenPayload> verifyAndGetUser(AccessToken accessToken) {
+    public TokenPayload verifyAndGetUser(AccessToken accessToken) {
         return jwtUtils.verifyAndGetToken(accessToken, TokenPayload.class);
     }
 

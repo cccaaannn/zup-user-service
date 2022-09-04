@@ -7,9 +7,9 @@ import com.can.zupuserservice.core.data.dto.AccessToken;
 import java.util.Map;
 
 public interface IJWTUtils {
-    DataResult<AccessToken> generateTokenRaw(Map<String, Object> claims);
-    <TokenPayloadType> DataResult<AccessToken> generateToken(TokenPayloadType tokenPayloadType);
+    AccessToken generateTokenRaw(Map<String, Object> claims);
+    <TokenPayloadType> AccessToken generateToken(TokenPayloadType tokenPayloadType);
     Result verifyToken(AccessToken accessToken);
-    DataResult<Map<String, ?>> verifyAndGetTokenRaw(AccessToken accessToken);
-    <TokenPayloadType> DataResult<TokenPayloadType> verifyAndGetToken(AccessToken accessToken, Class<TokenPayloadType> tokenPayloadType);
+    Map<String, ?> verifyAndGetTokenRaw(AccessToken accessToken);
+    <TokenPayloadType> TokenPayloadType verifyAndGetToken(AccessToken accessToken, Class<TokenPayloadType> tokenPayloadType);
 }

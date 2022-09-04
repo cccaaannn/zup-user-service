@@ -37,7 +37,7 @@ public class UserFriendService implements IUserFriendService {
 
         UserFriend userFriend = modelMapper.map(userFriendAddDTO, UserFriend.class);
 
-        TokenPayload tokenPayload = ITokenUtilsService.getTokenPayload().getData();
+        TokenPayload tokenPayload = ITokenUtilsService.getTokenPayload();
 
         userFriend.setOwnUserFromId(tokenPayload.getId());
 
