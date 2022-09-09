@@ -4,6 +4,7 @@ import com.can.zupuserservice.core.utilities.result.abstracts.IResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+
 public abstract class BaseController implements IBaseController {
 
     public ResponseEntity<?> httpResult(IResult result) {

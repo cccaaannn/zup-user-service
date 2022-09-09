@@ -1,5 +1,6 @@
 package com.can.zupuserservice.config;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.can.zupuserservice.core.exception.ForbiddenException;
 import com.can.zupuserservice.core.exception.NotFoundException;
@@ -26,11 +27,11 @@ public class ControllerConfig {
         return new ResponseEntity<>(new ErrorResult("Server error"), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Object> notAuthorizedException(ForbiddenException ex) {
         ex.printStackTrace();
-        return new ResponseEntity<>(new ErrorResult("Not authorized"), new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new ErrorResult("Forbidden"), new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -40,8 +41,8 @@ public class ControllerConfig {
         return new ResponseEntity<>(new ErrorResult("Not found"), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
-    @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    @ExceptionHandler(JWTVerificationException.class)
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = {JWTVerificationException.class, JWTDecodeException.class})
     public ResponseEntity<Object> jwtVerificationException(JWTVerificationException ex) {
         ex.printStackTrace();
         return new ResponseEntity<>(new ErrorResult("Not authorized"), new HttpHeaders(), HttpStatus.UNAUTHORIZED);

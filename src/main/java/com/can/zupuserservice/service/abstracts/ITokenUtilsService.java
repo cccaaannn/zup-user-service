@@ -10,5 +10,5 @@ public interface ITokenUtilsService {
 
     AccessToken generateToken(TokenPayload tokenPayload);
 
-    TokenPayload verifyAndGetUser(AccessToken accessToken);
+    TokenPayload verifyAndGetTokenPayload(AccessToken accessToken);
 }

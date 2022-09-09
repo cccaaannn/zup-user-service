@@ -39,7 +39,7 @@ public class TokenUtilsService implements ITokenUtilsService {
     }
 
     @Override
-    public TokenPayload verifyAndGetUser(AccessToken accessToken) {
+    public TokenPayload verifyAndGetTokenPayload(AccessToken accessToken) {
         return jwtUtils.verifyAndGetToken(accessToken, TokenPayload.class);
     }
 
