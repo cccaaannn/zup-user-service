@@ -18,6 +18,7 @@ import java.util.Date;
 @Table(name = "user_online_status")
 public class UserOnlineStatus {
 
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

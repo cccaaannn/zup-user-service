@@ -31,14 +31,14 @@ public class ControllerConfig {
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<Object> notAuthorizedException(ForbiddenException ex) {
         ex.printStackTrace();
-        return new ResponseEntity<>(new ErrorResult("Forbidden"), new HttpHeaders(), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(new ErrorResult(ex.getMessage()), new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> notFoundException(NotFoundException ex) {
         ex.printStackTrace();
-        return new ResponseEntity<>(new ErrorResult("Not found"), new HttpHeaders(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResult(ex.getMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
