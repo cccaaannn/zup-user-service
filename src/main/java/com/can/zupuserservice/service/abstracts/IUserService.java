@@ -13,9 +13,13 @@ import org.springframework.data.domain.Page;
 public interface IUserService {
     DataResult<Page<UserDTO>> getAll(SortParamsDTO sortParamsDTO);
 
-    DataResult<User> getById(Long userId);
+    DataResult<UserDTO> getById(Long userId);
 
-    DataResult<User> getByUsername(String username);
+    DataResult<User> getByIdInternal(Long userId);
+
+    DataResult<UserDTO> getByUsername(String username);
+
+    DataResult<User> getByUsernameInternal(String username);
 
     DataResult<User> getByEmail(String email);
 

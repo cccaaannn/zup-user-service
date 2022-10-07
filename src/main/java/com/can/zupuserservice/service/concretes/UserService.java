@@ -72,12 +72,30 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public DataResult<User> getById(Long userId) {
+    public DataResult<UserDTO> getById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        userDTO.setEmail(null);
+
+        // TODO return different parts of the user for different permissions.
+        return new SuccessDataResult<>(userDTO);
+    }
+
+    @Override
+    public DataResult<User> getByIdInternal(Long userId) {
         return new SuccessDataResult<>(userRepository.findById(userId).orElseThrow(NotFoundException::new));
     }
 
     @Override
-    public DataResult<User> getByUsername(String username) {
+    public DataResult<UserDTO> getByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(NotFoundException::new);
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        userDTO.setEmail(null);
+        return new SuccessDataResult<>(userDTO);
+    }
+
+    @Override
+    public DataResult<User> getByUsernameInternal(String username) {
         return new SuccessDataResult<>(userRepository.findByUsername(username).orElseThrow(NotFoundException::new));
     }
 

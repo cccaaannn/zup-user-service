@@ -28,6 +28,16 @@ public class UserController extends BaseController {
         return httpResult(userService.getAll(new SortParamsDTO(page, size, sort, order)));
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getById(@PathVariable Long userId) {
+        return httpResult(userService.getById(userId));
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<?> getByUsername(@PathVariable String username) {
+        return httpResult(userService.getByUsername(username));
+    }
+
     @PostMapping("")
     public ResponseEntity<?> add(@Valid @RequestBody UserAddDTO userAddDTO) {
         return httpResult(userService.add(userAddDTO));

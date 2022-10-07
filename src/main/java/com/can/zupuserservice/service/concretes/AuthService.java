@@ -88,7 +88,7 @@ public class AuthService implements IAuthService {
     public Result verifyAccount(AccessToken accessToken) {
         TokenPayload tokenPayload = tokenUtilsService.verifyAndGetTokenPayload(accessToken);
 
-        User user = userService.getById(tokenPayload.getId()).getData();
+        User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
         if(user.getUserStatus() == UserStatus.ACTIVE) {
             return new ErrorResult("Account is already active.");
@@ -112,7 +112,7 @@ public class AuthService implements IAuthService {
     public Result resetPassword(PasswordResetDTO passwordResetDTO) {
         TokenPayload tokenPayload = tokenUtilsService.verifyAndGetTokenPayload(passwordResetDTO.getAccessToken());
 
-        User user = userService.getById(tokenPayload.getId()).getData();
+        User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
         if(user.getUserStatus() == UserStatus.PASSIVE) {
             userService.activateUser(user.getId());
