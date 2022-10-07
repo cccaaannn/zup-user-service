@@ -31,15 +31,21 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final ITokenUtilsService tokenUtilsService;
 
-    public AuthorizationFilter(ITokenUtilsService tokenUtilsService) {
+    private final List<String> ALLOWED_PATHS;
+
+    public AuthorizationFilter(ITokenUtilsService tokenUtilsService, List<String> ALLOWED_PATHS) {
         this.tokenUtilsService = tokenUtilsService;
+        this.ALLOWED_PATHS = ALLOWED_PATHS;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().startsWith("/api/v1/auth")) {
-            filterChain.doFilter(request, response);
-            return;
+        String path = request.getServletPath();
+        for (String allowedPath : ALLOWED_PATHS) {
+            if (path.contains(allowedPath)) {
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
         // Verify authorization header

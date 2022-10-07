@@ -33,7 +33,7 @@ public class UserFriendService implements IUserFriendService {
     public Result add(UserFriendAddDTO userFriendAddDTO) {
 
         // Check if user exists
-        userFriendAddDTO.setFriendUser(userService.getById(userFriendAddDTO.getFriendUser().getId()).getData());
+        userFriendAddDTO.setFriendUser(userService.getByIdInternal(userFriendAddDTO.getFriendUser().getId()).getData());
 
         UserFriend userFriend = modelMapper.map(userFriendAddDTO, UserFriend.class);
 
