@@ -105,10 +105,6 @@
 				<version>3.0.0-M5</version>
 				<configuration>
 					<testFailureIgnore>true</testFailureIgnore>
-
-					<statelessTestReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5Xml30StatelessReporter">
-						<userPhrasedTestCaseMethodName>true</userPhrasedTestCaseMethodName>
-					</statelessTestReporter>
 				</configuration>
 			</plugin>
 			<plugin>
