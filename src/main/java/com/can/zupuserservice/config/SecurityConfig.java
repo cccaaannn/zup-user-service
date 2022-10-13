@@ -22,9 +22,9 @@ public class SecurityConfig {
     private final ITokenUtilsService tokenUtilsService;
 
     private static final List<String> ALLOWED_PATHS = List.of(
-            "api/v1/auth",
-            "api/v1/account",
-            "api/v1/authorization"
+            "api/user/v1/auth",
+            "api/user/v1/account",
+            "api/user/v1/authorization"
     );
 
     @Autowired

@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("${api.path.prefix}/users")
 public class UserOnlineStatusController extends BaseController {
 
     private final IUserOnlineStatusService userOnlineStatusService;

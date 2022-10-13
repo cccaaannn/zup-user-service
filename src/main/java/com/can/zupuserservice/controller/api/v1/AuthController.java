@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("${api.path.prefix}/auth")
 public class AuthController extends BaseController {
 
     private final IAuthService authService;

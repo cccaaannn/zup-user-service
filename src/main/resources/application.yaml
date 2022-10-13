@@ -1,6 +1,32 @@
 spring:
   profiles:
     active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url:
+#    username:
+#    password:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+
+api:
+  path:
+    prefix: /api/user/v1
+
+security:
+  jwt:
+#    secret-key:
+    authentication-expires-after: 86400000
+    account_activation-expires-after: 86400000
+    password_reset-expires-after: 86400000
+
+#email:
+#  gmail:
+#    username:
+#    password:
+
+frontend:
+#  base-url: http://localhost:3000
+  reset-password-path: /reset-password
+  verify-account-path: /verify-account

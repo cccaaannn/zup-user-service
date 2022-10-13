@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/v1/role")
+@RequestMapping("${api.path.prefix}/roles")
 public class RoleController extends BaseController {
 
     private final IRoleService roleService;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/account")
+@RequestMapping("${api.path.prefix}/account")
 public class AccountController extends BaseController {
 
     private final IAuthService authService;
