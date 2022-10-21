@@ -53,7 +53,7 @@ public class EmailUtilsService implements IEmailUtilsService {
         TokenPayload tokenPayload = new TokenPayload(user, TokenType.ACCOUNT_ACTIVATION);
         AccessToken accessToken = tokenUtilsService.generateToken(tokenPayload);
 
-        String url = frontendBaseUrl + resetPasswordPath + "?token=" + accessToken.getToken();
+        String url = frontendBaseUrl + verifyAccountPath + "?token=" + accessToken.getToken();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("USERNAME", user.getUsername());
