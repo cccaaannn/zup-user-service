@@ -1,25 +1,30 @@
 package com.can.zupuserservice.service.concretes;
 
+import com.can.zupuserservice.core.data.dto.AccessToken;
 import com.can.zupuserservice.core.data.dto.SortParamsDTO;
+import com.can.zupuserservice.core.data.enums.PageOrder;
+import com.can.zupuserservice.core.data.enums.UserStatus;
+import com.can.zupuserservice.core.exception.ForbiddenException;
 import com.can.zupuserservice.core.exception.NotFoundException;
+import com.can.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
 import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
 import com.can.zupuserservice.core.utilities.result.abstracts.Result;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorDataResult;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import com.can.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
 import com.can.zupuserservice.core.utilities.result.concretes.SuccessResult;
-import com.can.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
-import com.can.zupuserservice.core.data.enums.PageOrder;
-import com.can.zupuserservice.core.data.enums.UserStatus;
-import com.can.zupuserservice.data.entity.Role;
-import com.can.zupuserservice.data.entity.User;
-import com.can.zupuserservice.data.entity.UserOnlineStatus;
+import com.can.zupuserservice.data.dto.TokenPayload;
 import com.can.zupuserservice.data.dto.user.UserAddDTO;
 import com.can.zupuserservice.data.dto.user.UserDTO;
 import com.can.zupuserservice.data.dto.user.UserDeleteDTO;
 import com.can.zupuserservice.data.dto.user.UserUpdateDTO;
+import com.can.zupuserservice.data.entity.Role;
+import com.can.zupuserservice.data.entity.User;
+import com.can.zupuserservice.data.entity.UserOnlineStatus;
+import com.can.zupuserservice.data.enums.DefaultRoles;
 import com.can.zupuserservice.repository.UserRepository;
 import com.can.zupuserservice.service.abstracts.IRoleService;
+import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
 import com.can.zupuserservice.service.abstracts.IUserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +46,18 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final IRoleService roleService;
     private final IPasswordEncryptor passwordEncryptor;
+    private final ITokenUtilsService tokenUtilsService;
     private final ModelMapper modelMapper;
 
     private final static List<String> sortableFields = List.of("id", "username", "email", "role");
     private final static Map<String, String> sortableFieldsMap = Map.of("id", "id", "username", "username", "email", "email", "role", "role.name");
 
     @Autowired
-    public UserService(UserRepository userRepository, IRoleService roleService, IPasswordEncryptor passwordEncryptor, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository, IRoleService roleService, IPasswordEncryptor passwordEncryptor, ITokenUtilsService tokenUtilsService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.passwordEncryptor = passwordEncryptor;
+        this.tokenUtilsService = tokenUtilsService;
         this.modelMapper = modelMapper;
     }
 
@@ -126,7 +133,17 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
+    public Result selfActivateUser(Long id) {
+        userRepository.changeUserStatus(id, UserStatus.ACTIVE);
+        return new SuccessResult("User activated.");
+    }
+
+    @Override
+    @Transactional
     public Result activateUser(Long id) {
+        if(!canChangeStatus(id)) {
+            throw new ForbiddenException();
+        }
         userRepository.changeUserStatus(id, UserStatus.ACTIVE);
         return new SuccessResult("User activated.");
     }
@@ -134,6 +151,9 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public Result suspendUser(Long id) {
+        if(!canChangeStatus(id)) {
+            throw new ForbiddenException();
+        }
         userRepository.changeUserStatus(id, UserStatus.SUSPENDED);
         return new SuccessResult("User suspended.");
     }
@@ -187,7 +207,7 @@ public class UserService implements IUserService {
         user.setUsername(userUpdateDTO.getUsername());
 
         // Update password only if new password presents
-        if(Objects.nonNull(userUpdateDTO.getPassword())) {
+        if (Objects.nonNull(userUpdateDTO.getPassword())) {
             user.setPassword(passwordEncryptor.encrypt(userUpdateDTO.getPassword()));
         }
 
@@ -203,6 +223,19 @@ public class UserService implements IUserService {
         String username = user.getUsername();
         userRepository.delete(user);
         return new SuccessResult("User %s deleted".formatted(username));
+    }
+
+
+    private boolean canChangeStatus(Long id) {
+        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        if (
+                tokenPayload.getRole().equals(DefaultRoles.ADMIN.name) ||
+                        tokenPayload.getRole().equals(DefaultRoles.SYS_ADMIN.name) ||
+                        tokenPayload.getId().equals(id)
+        ) {
+            return true;
+        }
+        return false;
     }
 
 }

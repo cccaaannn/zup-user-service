@@ -31,6 +31,6 @@ email:
 #    password:
 
 frontend:
-  base-url: http://localhost:3000
-  reset-password-path: /reset-password
-  verify-account-path: /verify-account
+  base-url: http://localhost:4200
+  reset-password-path: /auth/reset-password
+  verify-account-path: /auth/verify-account

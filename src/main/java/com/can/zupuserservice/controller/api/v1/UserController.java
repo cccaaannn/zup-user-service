@@ -48,6 +48,16 @@ public class UserController extends BaseController {
         return httpResult(userService.update(userUpdateDTO));
     }
 
+    @PatchMapping("/{userId}/activate")
+    public ResponseEntity<?> activate(@PathVariable Long userId) {
+        return httpResult(userService.activateUser(userId));
+    }
+
+    @PatchMapping("/{userId}/suspend")
+    public ResponseEntity<?> suspend(@PathVariable Long userId) {
+        return httpResult(userService.suspendUser(userId));
+    }
+
     @DeleteMapping("")
     public ResponseEntity<?> delete(@Valid @RequestBody UserDeleteDTO userDeleteDTO) {
         return httpResult(userService.delete(userDeleteDTO));
