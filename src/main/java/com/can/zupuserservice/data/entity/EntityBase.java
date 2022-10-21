@@ -25,10 +25,10 @@ public class EntityBase {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
-//    @Column(name = "created_by")
-//    private String createdBy;
-//
-//    @Column(name = "updated_by")
-//    private String updatedBy;
+    @Column(name = "created_by", nullable = true)
+    private Long createdBy;
+
+    @Column(name = "updated_by", nullable = true)
+    private Long updatedBy;
 
 }
