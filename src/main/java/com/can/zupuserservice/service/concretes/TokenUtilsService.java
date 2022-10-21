@@ -1,5 +1,6 @@
 package com.can.zupuserservice.service.concretes;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.can.zupuserservice.core.data.dto.AccessToken;
 import com.can.zupuserservice.core.exception.ForbiddenException;
 import com.can.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
@@ -25,7 +26,7 @@ public class TokenUtilsService implements ITokenUtilsService {
     }
 
     @Override
-    public TokenPayload getTokenPayload() {
+    public TokenPayload getTokenPayload() throws ForbiddenException, JWTVerificationException {
         String token = headerOperations.getToken();
         if (Objects.isNull(token)) {
             throw new ForbiddenException("Token is null");
@@ -34,13 +35,13 @@ public class TokenUtilsService implements ITokenUtilsService {
     }
 
     @Override
-    public AccessToken generateToken(TokenPayload tokenPayload) {
-        return jwtUtils.generateToken(tokenPayload);
+    public TokenPayload getTokenPayload(AccessToken accessToken) {
+        return jwtUtils.verifyAndGetToken(accessToken, TokenPayload.class);
     }
 
     @Override
-    public TokenPayload verifyAndGetTokenPayload(AccessToken accessToken) {
-        return jwtUtils.verifyAndGetToken(accessToken, TokenPayload.class);
+    public AccessToken generateToken(TokenPayload tokenPayload) {
+        return jwtUtils.generateToken(tokenPayload);
     }
 
 }

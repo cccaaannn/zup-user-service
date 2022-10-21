@@ -65,7 +65,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         // Verify token
         TokenPayload tokenPayload = null;
         try {
-            tokenPayload = tokenUtilsService.verifyAndGetTokenPayload(new AccessToken(token));
+            tokenPayload = tokenUtilsService.getTokenPayload(new AccessToken(token));
         } catch (JWTVerificationException e) {
             logger.info("Jwt verification failed. Host ip: %s (%s)".formatted(request.getRemoteHost(), e.getMessage()));
 

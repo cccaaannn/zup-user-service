@@ -42,7 +42,7 @@ public class AuthService implements IAuthService {
 
     @Override
     public DataResult<AccessToken> login(LoginDTO loginDTO) {
-        User user = userService.getByEmail(loginDTO.getEmail()).getData();
+        User user = userService.getByUsernameInternal(loginDTO.getUsername()).getData();
 
         if (user.getUserStatus() != UserStatus.ACTIVE) {
             return new ErrorDataResult<>("User is not active");
@@ -72,21 +72,43 @@ public class AuthService implements IAuthService {
 
     @Override
     public Result sendVerifyAccountEmail(UserEmailDTO userEmailDTO) {
-        DataResult<User> userResult = userService.getByEmail(userEmailDTO.getEmail());
-        emailUtilsService.sendVerifyAccountEmail(userResult.getData());
+        User user = userService.getByEmail(userEmailDTO.getEmail()).getData();
+
+        if(user.getUserStatus() == UserStatus.ACTIVE) {
+            return new ErrorResult("Account is already active.");
+        }
+        if(user.getUserStatus() == UserStatus.SUSPENDED) {
+            return new ErrorResult("Account is suspended.");
+        }
+        if(user.getUserStatus() == UserStatus.DELETED) {
+            return new ErrorResult("Account is deleted.");
+        }
+
+        emailUtilsService.sendVerifyAccountEmail(user);
         return new SuccessResult();
     }
 
     @Override
     public Result sendForgetPasswordEmail(UserEmailDTO userEmailDTO) {
-        DataResult<User> userResult = userService.getByEmail(userEmailDTO.getEmail());
-        emailUtilsService.sendResetPasswordEmail(userResult.getData());
+        User user = userService.getByEmail(userEmailDTO.getEmail()).getData();
+
+        if(user.getUserStatus() == UserStatus.PASSIVE) {
+            return new ErrorResult("Account is not activated yet.");
+        }
+        if(user.getUserStatus() == UserStatus.SUSPENDED) {
+            return new ErrorResult("Account is suspended.");
+        }
+        if(user.getUserStatus() == UserStatus.DELETED) {
+            return new ErrorResult("Account is deleted.");
+        }
+
+        emailUtilsService.sendResetPasswordEmail(user);
         return new SuccessResult();
     }
 
     @Override
     public Result verifyAccount(AccessToken accessToken) {
-        TokenPayload tokenPayload = tokenUtilsService.verifyAndGetTokenPayload(accessToken);
+        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(accessToken);
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
@@ -101,7 +123,7 @@ public class AuthService implements IAuthService {
         }
 
         if(user.getUserStatus() == UserStatus.PASSIVE) {
-            userService.activateUser(user.getId());
+            userService.selfActivateUser(user.getId());
             return new SuccessResult("Account activated.");
         }
 
@@ -110,12 +132,11 @@ public class AuthService implements IAuthService {
 
     @Override
     public Result resetPassword(PasswordResetDTO passwordResetDTO) {
-        TokenPayload tokenPayload = tokenUtilsService.verifyAndGetTokenPayload(passwordResetDTO.getAccessToken());
+        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(passwordResetDTO.getAccessToken());
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
         if(user.getUserStatus() == UserStatus.PASSIVE) {
-            userService.activateUser(user.getId());
             return new ErrorResult("Account is not activated yet.");
         }
         if(user.getUserStatus() == UserStatus.SUSPENDED) {

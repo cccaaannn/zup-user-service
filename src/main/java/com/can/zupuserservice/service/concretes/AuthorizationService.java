@@ -21,7 +21,7 @@ public class AuthorizationService implements IAuthorizationService {
 
     @Override
     public DataResult<TokenPayload> isAuthorized(AccessToken accessToken) {
-        return new SuccessDataResult<>(tokenUtilsService.verifyAndGetTokenPayload(accessToken));
+        return new SuccessDataResult<>(tokenUtilsService.getTokenPayload(accessToken));
     }
 
 }
