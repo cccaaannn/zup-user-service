@@ -4,6 +4,8 @@ spring:
 #    url:
 #    username:
 #    password:
+    hikari:
+      max-lifetime: 300000
   jpa:
     show-sql: false
     hibernate:
