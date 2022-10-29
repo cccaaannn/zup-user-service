@@ -49,7 +49,7 @@ public class AuthService implements IAuthService {
         }
 
         if (!passwordEncryptor.matches(loginDTO.getPassword(), user.getPassword())) {
-            return new ErrorDataResult<>("Login failed");
+            return new ErrorDataResult<>("Username or password is incorrect");
         }
 
         AccessToken accessToken = tokenUtilsService.generateToken(new TokenPayload(user, TokenType.AUTHENTICATION));
