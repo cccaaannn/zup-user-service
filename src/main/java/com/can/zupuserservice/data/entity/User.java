@@ -38,7 +38,7 @@ public class User extends EntityBase {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "ownUser", fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @OneToMany(mappedBy = "ownUser", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<UserFriend> userFriends;
 
     //    @ToString.Exclude
