@@ -1,6 +1,5 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.data.dto.AccessToken;
 import com.can.zupuserservice.core.data.dto.SortParamsDTO;
 import com.can.zupuserservice.core.data.enums.PageOrder;
 import com.can.zupuserservice.core.data.enums.UserStatus;
@@ -20,11 +19,13 @@ import com.can.zupuserservice.data.dto.user.UserDeleteDTO;
 import com.can.zupuserservice.data.dto.user.UserUpdateDTO;
 import com.can.zupuserservice.data.entity.Role;
 import com.can.zupuserservice.data.entity.User;
+import com.can.zupuserservice.data.entity.UserFriend;
 import com.can.zupuserservice.data.entity.UserOnlineStatus;
 import com.can.zupuserservice.data.enums.DefaultRoles;
 import com.can.zupuserservice.repository.UserRepository;
 import com.can.zupuserservice.service.abstracts.IRoleService;
 import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
+import com.can.zupuserservice.service.abstracts.IUserFriendService;
 import com.can.zupuserservice.service.abstracts.IUserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final IRoleService roleService;
+    private final IUserFriendService userFriendService;
     private final IPasswordEncryptor passwordEncryptor;
     private final ITokenUtilsService tokenUtilsService;
     private final ModelMapper modelMapper;
@@ -53,9 +55,10 @@ public class UserService implements IUserService {
     private final static Map<String, String> sortableFieldsMap = Map.of("id", "id", "username", "username", "email", "email", "role", "role.name");
 
     @Autowired
-    public UserService(UserRepository userRepository, IRoleService roleService, IPasswordEncryptor passwordEncryptor, ITokenUtilsService tokenUtilsService, ModelMapper modelMapper) {
+    public UserService(UserRepository userRepository, IRoleService roleService, IUserFriendService userFriendService, IPasswordEncryptor passwordEncryptor, ITokenUtilsService tokenUtilsService, ModelMapper modelMapper) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.userFriendService = userFriendService;
         this.passwordEncryptor = passwordEncryptor;
         this.tokenUtilsService = tokenUtilsService;
         this.modelMapper = modelMapper;
@@ -83,6 +86,10 @@ public class UserService implements IUserService {
         User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
         userDTO.setEmail(null);
+
+        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        UserFriend userFriend = userFriendService.getFriend(tokenPayload.getId(), userId).getData().orElse(null);
+        userDTO.setIsFriend(Objects.nonNull(userFriend));
 
         // TODO return different parts of the user for different permissions.
         return new SuccessDataResult<>(userDTO);
