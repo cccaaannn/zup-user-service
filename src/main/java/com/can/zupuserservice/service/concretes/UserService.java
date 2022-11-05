@@ -1,7 +1,5 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.data.dto.SortParamsDTO;
-import com.can.zupuserservice.core.data.enums.PageOrder;
 import com.can.zupuserservice.core.data.enums.UserStatus;
 import com.can.zupuserservice.core.exception.ForbiddenException;
 import com.can.zupuserservice.core.exception.NotFoundException;
@@ -22,22 +20,20 @@ import com.can.zupuserservice.data.entity.User;
 import com.can.zupuserservice.data.entity.UserFriend;
 import com.can.zupuserservice.data.entity.UserOnlineStatus;
 import com.can.zupuserservice.data.enums.DefaultRoles;
+import com.can.zupuserservice.mapper.UserMapper;
 import com.can.zupuserservice.repository.UserRepository;
 import com.can.zupuserservice.service.abstracts.IRoleService;
 import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
 import com.can.zupuserservice.service.abstracts.IUserFriendService;
 import com.can.zupuserservice.service.abstracts.IUserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -49,7 +45,7 @@ public class UserService implements IUserService {
     private final IUserFriendService userFriendService;
     private final IPasswordEncryptor passwordEncryptor;
     private final ITokenUtilsService tokenUtilsService;
-    private final ModelMapper modelMapper;
+    private final UserMapper userMapper;
 
     @Autowired
     public UserService(
@@ -58,28 +54,32 @@ public class UserService implements IUserService {
             IUserFriendService userFriendService,
             IPasswordEncryptor passwordEncryptor,
             ITokenUtilsService tokenUtilsService,
-            ModelMapper modelMapper
+            UserMapper userMapper
     ) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.userFriendService = userFriendService;
         this.passwordEncryptor = passwordEncryptor;
         this.tokenUtilsService = tokenUtilsService;
-        this.modelMapper = modelMapper;
+        this.userMapper = userMapper;
     }
 
     @Override
     public DataResult<Page<UserDTO>> getAll(PageRequest pageRequest, List<Long> ids) {
-        if(!ids.isEmpty()) {
-            return new SuccessDataResult<>(userRepository.customFindAll(pageRequest, ids));
+        Page<User> usersPage;
+        if (ids.isEmpty()) {
+            usersPage = userRepository.findAll(pageRequest);
+        } else {
+            usersPage = userRepository.findByIds(ids, pageRequest);
         }
-        return new SuccessDataResult<>(userRepository.customFindAll(pageRequest));
+
+        return new SuccessDataResult<>(new PageImpl<>(userMapper.usersToUserDTOs(usersPage.getContent()), pageRequest, usersPage.getTotalElements()));
     }
 
     @Override
     public DataResult<UserDTO> getById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        UserDTO userDTO = userMapper.userToUserDTO(user);
         userDTO.setEmail(null);
 
         TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
@@ -98,7 +98,7 @@ public class UserService implements IUserService {
     @Override
     public DataResult<UserDTO> getByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(NotFoundException::new);
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        UserDTO userDTO = userMapper.userToUserDTO(user);
         userDTO.setEmail(null);
         return new SuccessDataResult<>(userDTO);
     }
@@ -143,7 +143,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public Result activateUser(Long id) {
-        if(!canChangeStatus(id)) {
+        if (!canChangeStatus(id)) {
             throw new ForbiddenException();
         }
         userRepository.changeUserStatus(id, UserStatus.ACTIVE);
@@ -153,7 +153,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public Result suspendUser(Long id) {
-        if(!canChangeStatus(id)) {
+        if (!canChangeStatus(id)) {
             throw new ForbiddenException();
         }
         userRepository.changeUserStatus(id, UserStatus.SUSPENDED);
@@ -182,7 +182,7 @@ public class UserService implements IUserService {
         UserOnlineStatus userOnlineStatus = new UserOnlineStatus();
         Role role = roleService.getByName("USER").getData();
 
-        User user = modelMapper.map(userAddDTO, User.class);
+        User user = userMapper.userAddDTOToUser(userAddDTO);
         user.setRole(role);
         user.setUserStatus(UserStatus.PASSIVE);
         user.setPassword(passwordEncryptor.encrypt(userAddDTO.getPassword()));

@@ -9,6 +9,7 @@ import com.can.zupuserservice.data.dto.TokenPayload;
 import com.can.zupuserservice.data.dto.UserFriend.UserFriendAddDeleteDTO;
 import com.can.zupuserservice.data.dto.user.UserDTO;
 import com.can.zupuserservice.data.entity.UserFriend;
+import com.can.zupuserservice.mapper.UserMapper;
 import com.can.zupuserservice.repository.UserFriendRepository;
 import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
 import com.can.zupuserservice.service.abstracts.IUserFriendService;
@@ -28,18 +29,19 @@ public class UserFriendService implements IUserFriendService {
     private final UserFriendRepository userFriendRepository;
     private final IUserService userService;
     private final ITokenUtilsService tokenUtilsService;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserFriendService(UserFriendRepository userFriendRepository, @Lazy IUserService userService, ITokenUtilsService tokenUtilsService) {
+    public UserFriendService(UserFriendRepository userFriendRepository, @Lazy IUserService userService, ITokenUtilsService tokenUtilsService, UserMapper userMapper) {
         this.userFriendRepository = userFriendRepository;
         this.userService = userService;
         this.tokenUtilsService = tokenUtilsService;
+        this.userMapper = userMapper;
     }
 
-    @Override
-    public DataResult<List<UserDTO>> getAllFriends() {
+    public DataResult<List<UserDTO>> getFriends() {
         TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
-        return new SuccessDataResult<>(userFriendRepository.getAllFriends(tokenPayload.getId()));
+        return new SuccessDataResult<>(userMapper.usersToUserDTOs(userFriendRepository.getFriends(tokenPayload.getId())));
     }
 
     @Override

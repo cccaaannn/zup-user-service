@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserFriendService {
-    DataResult<List<UserDTO>> getAllFriends();
+    DataResult<List<UserDTO>> getFriends();
 
     DataResult<Optional<UserFriend>> getFriend(Long ownUserId, Long friendUserId);
 

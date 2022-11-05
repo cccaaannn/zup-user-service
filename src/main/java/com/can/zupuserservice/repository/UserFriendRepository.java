@@ -1,6 +1,6 @@
 package com.can.zupuserservice.repository;
 
-import com.can.zupuserservice.data.dto.user.UserDTO;
+import com.can.zupuserservice.data.entity.User;
 import com.can.zupuserservice.data.entity.UserFriend;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,20 +12,8 @@ import java.util.Optional;
 @Repository
 public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
 
-    @Query("SELECT " +
-            "new com.can.zupuserservice.data.dto.user.UserDTO(" +
-            "uf.friendUser.id, " +
-            "uf.friendUser.username, " +
-            "uf.friendUser.email, " +
-            "uf.friendUser.userStatus, " +
-            "uf.friendUser.role, " +
-            "uf.friendUser.userOnlineStatus, " +
-            "uf.friendUser.updatedAt, " +
-            "uf.friendUser.updatedAt, " +
-            "true" +
-            ") " +
-            "FROM UserFriend uf WHERE uf.ownUser.id = :userId ORDER BY uf.friendUser.username ASC")
-    List<UserDTO> getAllFriends(Long userId);
+    @Query("SELECT uf.friendUser FROM UserFriend uf WHERE uf.ownUser.id = :userId ORDER BY uf.friendUser.username ASC")
+    List<User> getFriends(Long userId);
 
     @Query("FROM UserFriend uf WHERE uf.ownUser.id=:ownUserId AND uf.friendUser.id=:friendUserId")
     Optional<UserFriend> getFriend(Long ownUserId, Long friendUserId);

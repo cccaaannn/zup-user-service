@@ -1,6 +1,7 @@
 package com.can.zupuserservice.data.dto.user;
 
 import com.can.zupuserservice.core.data.enums.UserStatus;
+import com.can.zupuserservice.data.dto.rold.RoleDTO;
 import com.can.zupuserservice.data.entity.Role;
 import com.can.zupuserservice.data.entity.UserOnlineStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -19,13 +20,13 @@ public class UserDTO {
     private String username;
     private String email;
     private UserStatus userStatus;
-    private Role role;
+    private RoleDTO role;
     private UserOnlineStatus userOnlineStatus;
     private Date createdAt;
     private Date updatedAt;
     private Boolean isFriend = false;
 
-    public UserDTO(Long id, String username, String email, UserStatus userStatus, Role role, UserOnlineStatus userOnlineStatus, Date createdAt, Date updatedAt) {
+    public UserDTO(Long id, String username, String email, UserStatus userStatus, RoleDTO role, UserOnlineStatus userOnlineStatus, Date createdAt, Date updatedAt) {
         this.id = id;
         this.username = username;
         this.email = email;

@@ -22,7 +22,7 @@ public class UserFriendController extends BaseController {
 
     @GetMapping("")
     public ResponseEntity<?> getAllFriends() {
-        return httpResult(userFriendService.getAllFriends());
+        return httpResult(userFriendService.getFriends());
     }
 
     @PutMapping("/toggle")
