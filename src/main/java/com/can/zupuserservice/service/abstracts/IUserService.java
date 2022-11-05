@@ -1,6 +1,5 @@
 package com.can.zupuserservice.service.abstracts;
 
-import com.can.zupuserservice.core.data.dto.SortParamsDTO;
 import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
 import com.can.zupuserservice.core.utilities.result.abstracts.Result;
 import com.can.zupuserservice.data.dto.user.UserAddDTO;
@@ -9,9 +8,12 @@ import com.can.zupuserservice.data.dto.user.UserDeleteDTO;
 import com.can.zupuserservice.data.dto.user.UserUpdateDTO;
 import com.can.zupuserservice.data.entity.User;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
+import java.util.List;
 
 public interface IUserService {
-    DataResult<Page<UserDTO>> getAll(SortParamsDTO sortParamsDTO);
+    DataResult<Page<UserDTO>> getAll(PageRequest pageRequest, List<Long> ids);
 
     DataResult<UserDTO> getById(Long userId);
 

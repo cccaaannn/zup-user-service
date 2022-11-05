@@ -1,17 +1,24 @@
 package com.can.zupuserservice.controller.api.v1;
 
 import com.can.zupuserservice.core.controller.abstracts.BaseController;
-import com.can.zupuserservice.core.data.dto.SortParamsDTO;
+import com.can.zupuserservice.core.data.enums.PageOrder;
 import com.can.zupuserservice.data.dto.user.UserAddDTO;
 import com.can.zupuserservice.data.dto.user.UserDeleteDTO;
 import com.can.zupuserservice.data.dto.user.UserUpdateDTO;
+import com.can.zupuserservice.data.enums.UserSort;
 import com.can.zupuserservice.service.abstracts.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import java.util.List;
 
+@Validated
 @RestController
 @RequestMapping("${api.path.prefix}/users")
 public class UserController extends BaseController {
@@ -24,8 +31,14 @@ public class UserController extends BaseController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getAll(@RequestParam Integer page, @RequestParam Integer size, @RequestParam String sort, @RequestParam String order) {
-        return httpResult(userService.getAll(new SortParamsDTO(page, size, sort, order)));
+    public ResponseEntity<?> getAll(
+            @RequestParam(name = "page", defaultValue = "0", required = true) @Min(0) Integer page,
+            @RequestParam(name = "size", defaultValue = "10", required = true) @Min(1) Integer size,
+            @RequestParam(name = "sort", defaultValue = "id", required = true) UserSort sort,
+            @RequestParam(name = "order", defaultValue = "desc", required = true) PageOrder order,
+            @RequestParam(name = "ids", defaultValue = "", required = false) List<Long> ids
+    ) {
+        return httpResult(userService.getAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order.ORDER_NAME), sort.SORT_NAME)), ids));
     }
 
     @GetMapping("/{userId}")

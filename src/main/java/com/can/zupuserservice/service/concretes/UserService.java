@@ -51,11 +51,15 @@ public class UserService implements IUserService {
     private final ITokenUtilsService tokenUtilsService;
     private final ModelMapper modelMapper;
 
-    private final static List<String> sortableFields = List.of("id", "username", "email", "role");
-    private final static Map<String, String> sortableFieldsMap = Map.of("id", "id", "username", "username", "email", "email", "role", "role.name");
-
     @Autowired
-    public UserService(UserRepository userRepository, IRoleService roleService, IUserFriendService userFriendService, IPasswordEncryptor passwordEncryptor, ITokenUtilsService tokenUtilsService, ModelMapper modelMapper) {
+    public UserService(
+            UserRepository userRepository,
+            IRoleService roleService,
+            IUserFriendService userFriendService,
+            IPasswordEncryptor passwordEncryptor,
+            ITokenUtilsService tokenUtilsService,
+            ModelMapper modelMapper
+    ) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.userFriendService = userFriendService;
@@ -65,20 +69,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public DataResult<Page<UserDTO>> getAll(SortParamsDTO sortParamsDTO) {
-        if (!UserService.sortableFields.contains(sortParamsDTO.getSort())) {
-            return new ErrorDataResult<>("No sorting option exists for %s".formatted(sortParamsDTO.getSort()));
+    public DataResult<Page<UserDTO>> getAll(PageRequest pageRequest, List<Long> ids) {
+        if(!ids.isEmpty()) {
+            return new SuccessDataResult<>(userRepository.customFindAll(pageRequest, ids));
         }
-
-        Sort sortBy;
-        if (Objects.nonNull(sortParamsDTO.getOrder()) && sortParamsDTO.getOrder().equalsIgnoreCase(PageOrder.DESC.ORDER_NAME)) {
-            sortBy = Sort.by(UserService.sortableFieldsMap.get(sortParamsDTO.getSort())).descending();
-        } else {
-            sortBy = Sort.by(UserService.sortableFieldsMap.get(sortParamsDTO.getSort())).ascending();
-        }
-        Pageable pageable = PageRequest.of(sortParamsDTO.getPage(), sortParamsDTO.getSize(), sortBy);
-
-        return new SuccessDataResult<>(userRepository.customFindAll(pageable));
+        return new SuccessDataResult<>(userRepository.customFindAll(pageRequest));
     }
 
     @Override

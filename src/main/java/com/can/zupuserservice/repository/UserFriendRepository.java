@@ -20,6 +20,8 @@ public interface UserFriendRepository extends JpaRepository<UserFriend, Long> {
             "uf.friendUser.userStatus, " +
             "uf.friendUser.role, " +
             "uf.friendUser.userOnlineStatus, " +
+            "uf.friendUser.updatedAt, " +
+            "uf.friendUser.updatedAt, " +
             "true" +
             ") " +
             "FROM UserFriend uf WHERE uf.ownUser.id = :userId ORDER BY uf.friendUser.username ASC")
