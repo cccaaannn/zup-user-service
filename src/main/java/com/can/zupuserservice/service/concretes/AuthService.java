@@ -1,6 +1,6 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
 import com.can.zupuserservice.core.data.enums.UserStatus;
 import com.can.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
 import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
@@ -41,7 +41,7 @@ public class AuthService implements IAuthService {
 
 
     @Override
-    public DataResult<AccessToken> login(LoginDTO loginDTO) {
+    public DataResult<JWTToken> login(LoginDTO loginDTO) {
         User user = userService.getByUsernameInternal(loginDTO.getUsername()).getData();
 
         if (user.getUserStatus() != UserStatus.ACTIVE) {
@@ -52,9 +52,9 @@ public class AuthService implements IAuthService {
             return new ErrorDataResult<>("Username or password is incorrect");
         }
 
-        AccessToken accessToken = tokenUtilsService.generateToken(new TokenPayload(user, TokenType.AUTHENTICATION));
+        JWTToken jwtToken = tokenUtilsService.generateToken(new TokenPayload(user, TokenType.AUTHENTICATION));
 
-        return new SuccessDataResult<>(accessToken);
+        return new SuccessDataResult<>(jwtToken);
     }
 
     @Override
@@ -107,8 +107,8 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public Result verifyAccount(AccessToken accessToken) {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(accessToken);
+    public Result verifyAccount(JWTToken jwtToken) {
+        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(jwtToken);
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
@@ -132,7 +132,7 @@ public class AuthService implements IAuthService {
 
     @Override
     public Result resetPassword(PasswordResetDTO passwordResetDTO) {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(passwordResetDTO.getAccessToken());
+        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(passwordResetDTO.getJwtToken());
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 

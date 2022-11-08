@@ -1,7 +1,7 @@
 package com.can.zupuserservice.controller.api.v1;
 
 import com.can.zupuserservice.core.controller.abstracts.BaseController;
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
 import com.can.zupuserservice.data.dto.auth.PasswordResetDTO;
 import com.can.zupuserservice.data.dto.auth.UserEmailDTO;
 import com.can.zupuserservice.service.abstracts.IAuthService;
@@ -31,8 +31,8 @@ public class AccountController extends BaseController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verifyAccount(@Valid @RequestBody AccessToken accessToken) {
-        return httpResult(authService.verifyAccount(accessToken));
+    public ResponseEntity<?> verifyAccount(@Valid @RequestBody JWTToken jwtToken) {
+        return httpResult(authService.verifyAccount(jwtToken));
     }
 
     @PostMapping("/password/send-reset")

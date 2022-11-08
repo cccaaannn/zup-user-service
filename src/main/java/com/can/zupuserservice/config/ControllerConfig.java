@@ -3,6 +3,7 @@ package com.can.zupuserservice.config;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.can.zupuserservice.core.exception.ForbiddenException;
+import com.can.zupuserservice.core.exception.JWTException;
 import com.can.zupuserservice.core.exception.NotFoundException;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import org.springframework.beans.TypeMismatchException;
@@ -68,9 +69,9 @@ public class ControllerConfig {
     }
 
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(value = {JWTVerificationException.class, JWTDecodeException.class})
-    public ResponseEntity<Object> jwtVerificationException(JWTVerificationException ex) {
-//        ex.printStackTrace();
+    @ExceptionHandler(value = {JWTException.class})
+    public ResponseEntity<Object> jwtVerificationException(JWTException ex) {
+        ex.printStackTrace();
         return new ResponseEntity<>(new ErrorResult("Not authorized"), new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }
 

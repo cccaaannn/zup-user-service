@@ -2,7 +2,7 @@ package com.can.zupuserservice.controller.api.v1;
 
 
 import com.can.zupuserservice.core.controller.abstracts.BaseController;
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
 import com.can.zupuserservice.service.abstracts.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +21,12 @@ public class AuthorizationController extends BaseController {
 
     @GetMapping("/{token}")
     public ResponseEntity<?> isAuthorizedGet(@PathVariable String token) {
-        return httpResult(authorizationService.isAuthorized(new AccessToken(token)));
+        return httpResult(authorizationService.isAuthorized(new JWTToken(token)));
     }
 
     @PostMapping("")
-    public ResponseEntity<?> isAuthorizedPost(@RequestBody AccessToken accessToken) {
-        return httpResult(authorizationService.isAuthorized(accessToken));
+    public ResponseEntity<?> isAuthorizedPost(@RequestBody JWTToken jwtToken) {
+        return httpResult(authorizationService.isAuthorized(jwtToken));
     }
 
 }

@@ -1,6 +1,6 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
 import com.can.zupuserservice.core.utilities.email.abstracts.IEmailClient;
 import com.can.zupuserservice.data.dto.TemplateEmailDTO;
 import com.can.zupuserservice.data.dto.TokenPayload;
@@ -51,9 +51,9 @@ public class EmailUtilsService implements IEmailUtilsService {
         templateEmailDTO.setTo(user.getEmail());
 
         TokenPayload tokenPayload = new TokenPayload(user, TokenType.ACCOUNT_ACTIVATION);
-        AccessToken accessToken = tokenUtilsService.generateToken(tokenPayload);
+        JWTToken jwtToken = tokenUtilsService.generateToken(tokenPayload);
 
-        String url = frontendBaseUrl + verifyAccountPath + "?token=" + accessToken.getToken();
+        String url = frontendBaseUrl + verifyAccountPath + "?token=" + jwtToken.getToken();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("USERNAME", user.getUsername());
@@ -72,9 +72,9 @@ public class EmailUtilsService implements IEmailUtilsService {
         templateEmailDTO.setTo(user.getEmail());
 
         TokenPayload tokenPayload = new TokenPayload(user, TokenType.PASSWORD_RESET);
-        AccessToken accessToken = tokenUtilsService.generateToken(tokenPayload);
+        JWTToken jwtToken = tokenUtilsService.generateToken(tokenPayload);
 
-        String url = frontendBaseUrl + resetPasswordPath + "?token=" + accessToken.getToken();
+        String url = frontendBaseUrl + resetPasswordPath + "?token=" + jwtToken.getToken();
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("USERNAME", user.getUsername());

@@ -1,6 +1,6 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
 import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
 import com.can.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
 import com.can.zupuserservice.data.dto.TokenPayload;
@@ -20,8 +20,8 @@ public class AuthorizationService implements IAuthorizationService {
     }
 
     @Override
-    public DataResult<TokenPayload> isAuthorized(AccessToken accessToken) {
-        return new SuccessDataResult<>(tokenUtilsService.getTokenPayload(accessToken));
+    public DataResult<TokenPayload> isAuthorized(JWTToken jwtToken) {
+        return new SuccessDataResult<>(tokenUtilsService.getTokenPayload(jwtToken));
     }
 
 }

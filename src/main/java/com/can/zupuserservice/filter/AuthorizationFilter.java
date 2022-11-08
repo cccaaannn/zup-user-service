@@ -1,7 +1,7 @@
 package com.can.zupuserservice.filter;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.exception.JWTException;
 import com.can.zupuserservice.core.utilities.result.abstracts.Result;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import com.can.zupuserservice.data.dto.TokenPayload;
@@ -63,10 +63,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         String token = authorizationHeader.substring("Bearer ".length());
 
         // Verify token
-        TokenPayload tokenPayload = null;
+        TokenPayload tokenPayload;
         try {
-            tokenPayload = tokenUtilsService.getTokenPayload(new AccessToken(token));
-        } catch (JWTVerificationException e) {
+            tokenPayload = tokenUtilsService.getTokenPayload(new JWTToken(token));
+        } catch (JWTException e) {
             logger.info("Jwt verification failed. Host ip: %s (%s)".formatted(request.getRemoteHost(), e.getMessage()));
 
             response.setStatus(HttpStatus.FORBIDDEN.value());
