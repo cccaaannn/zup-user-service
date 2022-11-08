@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AccessToken {
+public class JWTToken {
     @NotNull
     private String token;
 }

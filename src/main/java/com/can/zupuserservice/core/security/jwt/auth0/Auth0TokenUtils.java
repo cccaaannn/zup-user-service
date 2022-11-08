@@ -2,25 +2,18 @@ package com.can.zupuserservice.core.security.jwt.auth0;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.data.dto.JWTTokenPayloadCore;
+import com.can.zupuserservice.core.exception.JWTException;
 import com.can.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
-import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
-import com.can.zupuserservice.core.utilities.result.abstracts.Result;
-import com.can.zupuserservice.core.utilities.result.concretes.ErrorDataResult;
-import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
-import com.can.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
-import com.can.zupuserservice.core.utilities.result.concretes.SuccessResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 public class Auth0TokenUtils implements IJWTUtils {
@@ -28,78 +21,115 @@ public class Auth0TokenUtils implements IJWTUtils {
     private final Algorithm algorithm;
     private final Long expiresAfter;
     private final JWTVerifier verifier;
-    private String issuer = "SYSTEM";
     private final ObjectMapper jacksonObjectMapper;
+    private String issuer = "SYSTEM";
+    private String payloadDataFieldName = "data";
 
     public Auth0TokenUtils(Long expiresAfter, String secretKey) {
         this.expiresAfter = expiresAfter;
+
+        // Init jwt lib
         this.algorithm = Algorithm.HMAC256(secretKey);
-        verifier = JWT.require(algorithm).build();
-        jacksonObjectMapper = new ObjectMapper();
-        jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.verifier = JWT.require(this.algorithm).build();
+
+        // Init object mapper
+        this.jacksonObjectMapper = new ObjectMapper();
+        this.jacksonObjectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public Auth0TokenUtils(Long expiresAfter, String secretKey, String issuer) {
-        this(expiresAfter, secretKey);
+    public void setIssuer(String issuer) {
         this.issuer = issuer;
     }
 
-    @Override
-    public AccessToken generateTokenRaw(Map<String, Object> claims) {
-            String token = JWT.create()
-                    .withIssuer(issuer)
-                    .withPayload(claims)
-                    .withExpiresAt(getExpirationDate())
-                    .sign(algorithm);
-            AccessToken accessToken = new AccessToken(token);
-            return accessToken;
+    public void setPayloadDataFieldName(String payloadDataFieldName) {
+        this.payloadDataFieldName = payloadDataFieldName;
+    }
+
+    private JWTToken generateTokenBase(Map<String, Object> claims) {
+        long currentMillis = System.currentTimeMillis();
+        Date issuedAt = new Date(currentMillis);
+        Date expiresAt = new Date(currentMillis + this.expiresAfter);
+
+        String token = JWT.create()
+                .withIssuer(issuer)
+                .withIssuedAt(issuedAt)
+                .withExpiresAt(expiresAt)
+                .withPayload(Map.of(payloadDataFieldName, claims))
+                .sign(algorithm);
+        return new JWTToken(token);
     }
 
     @Override
-    public <TokenPayloadType> AccessToken generateToken(TokenPayloadType tokenPayloadType) throws JWTVerificationException  {
-        Map<String, Object> claims = jacksonObjectMapper.convertValue(tokenPayloadType, new TypeReference<Map<String, Object>>() {
+    public JWTToken generateToken(Map<String, Object> claims) {
+        return generateTokenBase(claims);
+    }
+
+    @Override
+    public <TokenPayloadType> JWTToken generateToken(TokenPayloadType tokenPayloadType) {
+        Map<String, Object> claims = jacksonObjectMapper.convertValue(tokenPayloadType, new TypeReference<>() {
         });
-            String token = JWT.create()
-                    .withIssuer(issuer)
-                    .withPayload(claims)
-                    .withExpiresAt(getExpirationDate())
-                    .sign(algorithm);
-            AccessToken accessToken = new AccessToken(token);
-            return accessToken;
-
+        return generateTokenBase(claims);
     }
 
     @Override
-    public Result verifyToken(AccessToken accessToken) {
+    public Map<String, Object> getDataAsMap(JWTToken jwtToken) throws JWTException {
         try {
-            verifier.verify(accessToken.getToken());
-            return new SuccessResult();
-        } catch (JWTDecodeException e) {
-            return new ErrorResult();
+            DecodedJWT decodedJWT = verifier.verify(jwtToken.getToken());
+            return decodedJWT.getClaims().get(payloadDataFieldName).asMap();
+        } catch (JWTVerificationException e) {
+            throw new JWTException(e.getMessage());
         }
     }
 
     @Override
-    public Map<String, ?> verifyAndGetTokenRaw(AccessToken accessToken) throws JWTVerificationException {
-            DecodedJWT jwt = verifier.verify(accessToken.getToken());
-            return jwt.getClaims();
+    public <TokenPayloadType> TokenPayloadType getDataAsObject(JWTToken jwtToken, Class<TokenPayloadType> tokenPayloadType) throws JWTException {
+        try {
+            DecodedJWT decodedJWT = verifier.verify(jwtToken.getToken());
+            return decodedJWT.getClaims().get(payloadDataFieldName).as(tokenPayloadType);
+        } catch (JWTVerificationException e) {
+            throw new JWTException(e.getMessage());
+        }
     }
 
     @Override
-    public <TokenPayloadType> TokenPayloadType verifyAndGetToken(AccessToken accessToken, Class<TokenPayloadType> tokenPayloadType) throws JWTVerificationException {
-        DecodedJWT jwt = verifier.verify(accessToken.getToken());
-
-        Map<String, String> claims = new HashMap<>();
-        for (Map.Entry<String, Claim> claim : jwt.getClaims().entrySet()) {
-            claims.put(claim.getKey(), claim.getValue() != null ? claim.getValue().toString() : null);
+    public JWTTokenPayloadCore<Map<String, Object>> getPayloadAsMap(JWTToken jwtToken) throws JWTException {
+        try {
+            DecodedJWT decodedJWT = verifier.verify(jwtToken.getToken());
+            return JWTTokenPayloadCore.<Map<String, Object>>builder()
+                    .issuer(decodedJWT.getIssuer())
+                    .expiresAt(decodedJWT.getExpiresAt())
+                    .issuedAt(decodedJWT.getIssuedAt())
+                    .data(decodedJWT.getClaims().get(payloadDataFieldName).asMap())
+                    .build();
+        } catch (JWTVerificationException e) {
+            throw new JWTException(e.getMessage());
         }
-        TokenPayloadType tokenPayload = jacksonObjectMapper.convertValue(claims, tokenPayloadType);
-
-        return tokenPayload;
     }
 
-    private Date getExpirationDate() {
-        return new Date(System.currentTimeMillis() + this.expiresAfter);
+    @Override
+    public <TokenPayloadType> JWTTokenPayloadCore<TokenPayloadType> getPayloadAsObject(JWTToken jwtToken, Class<TokenPayloadType> tokenPayloadType) throws JWTException {
+        try {
+            DecodedJWT decodedJWT = verifier.verify(jwtToken.getToken());
+            return JWTTokenPayloadCore.<TokenPayloadType>builder()
+                    .issuer(decodedJWT.getIssuer())
+                    .expiresAt(decodedJWT.getExpiresAt())
+                    .issuedAt(decodedJWT.getIssuedAt())
+                    .data(decodedJWT.getClaims().get(payloadDataFieldName).as(tokenPayloadType))
+                    .build();
+        } catch (JWTVerificationException e) {
+            throw new JWTException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean isValid(JWTToken jwtToken) {
+        try {
+            verifier.verify(jwtToken.getToken());
+            return true;
+        } catch (JWTVerificationException e) {
+            return false;
+        }
     }
 
 }
+

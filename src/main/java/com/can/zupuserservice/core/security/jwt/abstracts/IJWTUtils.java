@@ -1,15 +1,23 @@
 package com.can.zupuserservice.core.security.jwt.abstracts;
 
-import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
-import com.can.zupuserservice.core.utilities.result.abstracts.Result;
-import com.can.zupuserservice.core.data.dto.AccessToken;
+import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.data.dto.JWTTokenPayloadCore;
+import com.can.zupuserservice.core.exception.JWTException;
 
 import java.util.Map;
 
 public interface IJWTUtils {
-    AccessToken generateTokenRaw(Map<String, Object> claims);
-    <TokenPayloadType> AccessToken generateToken(TokenPayloadType tokenPayloadType);
-    Result verifyToken(AccessToken accessToken);
-    Map<String, ?> verifyAndGetTokenRaw(AccessToken accessToken);
-    <TokenPayloadType> TokenPayloadType verifyAndGetToken(AccessToken accessToken, Class<TokenPayloadType> tokenPayloadType);
+    JWTToken generateToken(Map<String, Object> claims);
+
+    <TokenPayloadType> JWTToken generateToken(TokenPayloadType tokenPayloadType);
+
+    Map<String, Object> getDataAsMap(JWTToken jwtToken) throws JWTException;
+
+    <TokenPayloadType> TokenPayloadType getDataAsObject(JWTToken jwtToken, Class<TokenPayloadType> tokenPayloadType) throws JWTException;
+
+    JWTTokenPayloadCore<Map<String, Object>> getPayloadAsMap(JWTToken jwtToken) throws JWTException;
+
+    <TokenPayloadType> JWTTokenPayloadCore<TokenPayloadType> getPayloadAsObject(JWTToken jwtToken, Class<TokenPayloadType> tokenPayloadType) throws JWTException;
+
+    boolean isValid(JWTToken jwtToken);
 }
