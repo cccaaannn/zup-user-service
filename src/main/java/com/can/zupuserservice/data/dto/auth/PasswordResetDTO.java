@@ -1,7 +1,7 @@
 package com.can.zupuserservice.data.dto.auth;
 
-import com.can.zupuserservice.core.aspects.annotations.StrongPassword;
-import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.validation.password.aspects.annotations.StrongPassword;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

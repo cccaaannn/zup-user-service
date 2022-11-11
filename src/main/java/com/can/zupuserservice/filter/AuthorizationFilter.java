@@ -1,7 +1,7 @@
 package com.can.zupuserservice.filter;
 
-import com.can.zupuserservice.core.data.dto.JWTToken;
-import com.can.zupuserservice.core.exception.JWTException;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.jwt.exceptions.JWTException;
 import com.can.zupuserservice.core.utilities.result.abstracts.Result;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import com.can.zupuserservice.data.dto.TokenPayload;

@@ -1,7 +1,7 @@
 package com.can.zupuserservice.service.abstracts;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.can.zupuserservice.core.exception.ForbiddenException;
 import com.can.zupuserservice.data.dto.TokenPayload;
 

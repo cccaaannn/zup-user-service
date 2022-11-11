@@ -1,6 +1,6 @@
 package com.can.zupuserservice.data.dto.user;
 
-import com.can.zupuserservice.core.aspects.annotations.StrongPassword;
+import com.can.zupuserservice.core.security.validation.password.aspects.annotations.StrongPassword;
 import com.can.zupuserservice.aspect.annotation.UniqueEmail;
 import com.can.zupuserservice.aspect.annotation.UniqueUsername;
 import lombok.AllArgsConstructor;
@@ -30,7 +30,7 @@ public class UserAddDTO {
     @UniqueEmail
     private String email;
 
-    @StrongPassword
+    @StrongPassword(usePropertyKeyOnMessages = true)
     private String password;
 
 }

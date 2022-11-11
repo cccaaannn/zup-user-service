@@ -1,7 +1,7 @@
 package com.can.zupuserservice.config;
 
 import com.can.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
-import com.can.zupuserservice.core.security.jwt.auth0.Auth0TokenUtils;
+import com.can.zupuserservice.core.security.jwt.auth0.JWTUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -26,19 +26,19 @@ public class JwtConfig {
     @Bean
     @Primary
     IJWTUtils getAuthenticationJwtUtils() {
-        return new Auth0TokenUtils(authenticationExpiresAfter, secretKey);
+        return new JWTUtils(authenticationExpiresAfter, secretKey);
     }
 
     @Bean
     @Qualifier("account_activation")
     IJWTUtils getAccountActivationJwtUtils() {
-        return new Auth0TokenUtils(accountActivationExpiresAfter, secretKey);
+        return new JWTUtils(accountActivationExpiresAfter, secretKey);
     }
 
     @Bean
     @Qualifier("password_reset")
     IJWTUtils getPasswordResetJwtUtils() {
-        return new Auth0TokenUtils(accountActivationExpiresAfter, secretKey);
+        return new JWTUtils(accountActivationExpiresAfter, secretKey);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.can.zupuserservice.core.data.enums.UserStatus;
 import com.can.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
 import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;

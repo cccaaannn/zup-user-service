@@ -1,9 +1,7 @@
 package com.can.zupuserservice.config;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.can.zupuserservice.core.exception.ForbiddenException;
-import com.can.zupuserservice.core.exception.JWTException;
+import com.can.zupuserservice.core.security.jwt.exceptions.JWTException;
 import com.can.zupuserservice.core.exception.NotFoundException;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import org.springframework.beans.TypeMismatchException;

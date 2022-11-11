@@ -1,6 +1,6 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.can.zupuserservice.core.utilities.email.abstracts.IEmailClient;
 import com.can.zupuserservice.data.dto.TemplateEmailDTO;
 import com.can.zupuserservice.data.dto.TokenPayload;

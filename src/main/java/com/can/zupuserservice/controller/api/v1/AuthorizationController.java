@@ -2,7 +2,7 @@ package com.can.zupuserservice.controller.api.v1;
 
 
 import com.can.zupuserservice.core.controller.abstracts.BaseController;
-import com.can.zupuserservice.core.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.can.zupuserservice.service.abstracts.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
