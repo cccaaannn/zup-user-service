@@ -1,4 +1,4 @@
-package com.can.zupuserservice.core.data.dto;
+package com.can.zupuserservice.core.security.jwt.data.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

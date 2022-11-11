@@ -1,12 +1,21 @@
 package com.can.zupuserservice.core.security.jwt.abstracts;
 
-import com.can.zupuserservice.core.data.dto.JWTToken;
-import com.can.zupuserservice.core.data.dto.JWTTokenPayloadCore;
-import com.can.zupuserservice.core.exception.JWTException;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTTokenPayloadCore;
+import com.can.zupuserservice.core.security.jwt.exceptions.JWTException;
 
 import java.util.Map;
 
+/**
+ * <h2>Interface for generic jwt utils.</h2>
+ * <hr/>
+ *
+ * @author Can Kurt
+ * @version 1.0
+ * @since 2022-11-11
+ */
 public interface IJWTUtils {
+
     JWTToken generateToken(Map<String, Object> claims);
 
     <TokenPayloadType> JWTToken generateToken(TokenPayloadType tokenPayloadType);

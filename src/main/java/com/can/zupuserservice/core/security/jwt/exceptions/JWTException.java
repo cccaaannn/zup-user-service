@@ -1,4 +1,4 @@
-package com.can.zupuserservice.core.exception;
+package com.can.zupuserservice.core.security.jwt.exceptions;
 
 public class JWTException extends RuntimeException{
     public JWTException() {

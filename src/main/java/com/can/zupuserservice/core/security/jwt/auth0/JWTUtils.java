@@ -5,10 +5,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.can.zupuserservice.core.data.dto.JWTToken;
-import com.can.zupuserservice.core.data.dto.JWTTokenPayloadCore;
-import com.can.zupuserservice.core.exception.JWTException;
 import com.can.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTTokenPayloadCore;
+import com.can.zupuserservice.core.security.jwt.exceptions.JWTException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,7 +16,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
 import java.util.Map;
 
-public class Auth0TokenUtils implements IJWTUtils {
+/**
+ * <h2>Implementation for jwt utils with <i>auth0.jwt</i>.</h2>
+ * <hr/>
+ *
+ * @author Can Kurt
+ * @version 1.0
+ * @since 2022-11-11
+ */
+public class JWTUtils implements IJWTUtils {
 
     private final Algorithm algorithm;
     private final Long expiresAfter;
@@ -25,7 +33,7 @@ public class Auth0TokenUtils implements IJWTUtils {
     private String issuer = "SYSTEM";
     private String payloadDataFieldName = "data";
 
-    public Auth0TokenUtils(Long expiresAfter, String secretKey) {
+    public JWTUtils(Long expiresAfter, String secretKey) {
         this.expiresAfter = expiresAfter;
 
         // Init jwt lib
