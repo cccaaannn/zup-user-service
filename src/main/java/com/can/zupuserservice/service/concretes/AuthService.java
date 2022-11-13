@@ -1,8 +1,8 @@
 package com.can.zupuserservice.service.concretes;
 
-import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.can.zupuserservice.core.data.enums.UserStatus;
 import com.can.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
+import com.can.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.can.zupuserservice.core.utilities.result.abstracts.DataResult;
 import com.can.zupuserservice.core.utilities.result.abstracts.Result;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorDataResult;
@@ -18,10 +18,14 @@ import com.can.zupuserservice.data.entity.User;
 import com.can.zupuserservice.data.enums.TokenType;
 import com.can.zupuserservice.service.abstracts.IAuthService;
 import com.can.zupuserservice.service.abstracts.IEmailUtilsService;
-import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
 import com.can.zupuserservice.service.abstracts.IUserService;
+import com.can.zupuserservice.util.HeaderUtils;
+import com.can.zupuserservice.util.MessageUtils;
+import com.can.zupuserservice.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Locale;
 
 @Service
 public class AuthService implements IAuthService {
@@ -29,30 +33,33 @@ public class AuthService implements IAuthService {
     private final IUserService userService;
     private final IPasswordEncryptor passwordEncryptor;
     private final IEmailUtilsService emailUtilsService;
-    private final ITokenUtilsService tokenUtilsService;
+    private final TokenUtils tokenUtils;
+    private final HeaderUtils headerUtils;
+    private final MessageUtils messageUtils;
 
     @Autowired
-    public AuthService(IUserService userService, IPasswordEncryptor passwordEncryptor, IEmailUtilsService emailUtilsService, ITokenUtilsService tokenUtilsService) {
+    public AuthService(IUserService userService, IPasswordEncryptor passwordEncryptor, IEmailUtilsService emailUtilsService, TokenUtils tokenUtils, HeaderUtils headerUtils, MessageUtils messageUtils) {
         this.userService = userService;
         this.passwordEncryptor = passwordEncryptor;
         this.emailUtilsService = emailUtilsService;
-        this.tokenUtilsService = tokenUtilsService;
+        this.tokenUtils = tokenUtils;
+        this.headerUtils = headerUtils;
+        this.messageUtils = messageUtils;
     }
-
 
     @Override
     public DataResult<JWTToken> login(LoginDTO loginDTO) {
         User user = userService.getByUsernameInternal(loginDTO.getUsername()).getData();
 
         if (user.getUserStatus() != UserStatus.ACTIVE) {
-            return new ErrorDataResult<>("User is not active");
+            return new ErrorDataResult<>(messageUtils.getMessage("auth.error.user-not-active"));
         }
 
         if (!passwordEncryptor.matches(loginDTO.getPassword(), user.getPassword())) {
-            return new ErrorDataResult<>("Username or password is incorrect");
+            return new ErrorDataResult<>(messageUtils.getMessage("auth.error.incorrect-password"));
         }
 
-        JWTToken jwtToken = tokenUtilsService.generateToken(new TokenPayload(user, TokenType.AUTHENTICATION));
+        JWTToken jwtToken = tokenUtils.generateToken(new TokenPayload(user, TokenType.AUTHENTICATION));
 
         return new SuccessDataResult<>(jwtToken);
     }
@@ -65,26 +72,28 @@ public class AuthService implements IAuthService {
             return userResult.toResult();
         }
 
-        emailUtilsService.sendVerifyAccountEmail(userResult.getData());
+        Locale locale = headerUtils.getLanguage();
+        emailUtilsService.sendVerifyAccountEmail(userResult.getData(), locale);
 
-        return new SuccessResult("New account created, waiting to be activated.");
+        return new SuccessResult(messageUtils.getMessage("auth.success.account-created"));
     }
 
     @Override
     public Result sendVerifyAccountEmail(UserEmailDTO userEmailDTO) {
         User user = userService.getByEmail(userEmailDTO.getEmail()).getData();
 
-        if(user.getUserStatus() == UserStatus.ACTIVE) {
-            return new ErrorResult("Account is already active.");
+        if (user.getUserStatus() == UserStatus.ACTIVE) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-already-active"));
         }
-        if(user.getUserStatus() == UserStatus.SUSPENDED) {
-            return new ErrorResult("Account is suspended.");
+        if (user.getUserStatus() == UserStatus.SUSPENDED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
         }
-        if(user.getUserStatus() == UserStatus.DELETED) {
-            return new ErrorResult("Account is deleted.");
+        if (user.getUserStatus() == UserStatus.DELETED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
         }
 
-        emailUtilsService.sendVerifyAccountEmail(user);
+        Locale locale = headerUtils.getLanguage();
+        emailUtilsService.sendVerifyAccountEmail(user, locale);
         return new SuccessResult();
     }
 
@@ -92,66 +101,67 @@ public class AuthService implements IAuthService {
     public Result sendForgetPasswordEmail(UserEmailDTO userEmailDTO) {
         User user = userService.getByEmail(userEmailDTO.getEmail()).getData();
 
-        if(user.getUserStatus() == UserStatus.PASSIVE) {
-            return new ErrorResult("Account is not activated yet.");
+        if (user.getUserStatus() == UserStatus.PASSIVE) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-not-active"));
         }
-        if(user.getUserStatus() == UserStatus.SUSPENDED) {
-            return new ErrorResult("Account is suspended.");
+        if (user.getUserStatus() == UserStatus.SUSPENDED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
         }
-        if(user.getUserStatus() == UserStatus.DELETED) {
-            return new ErrorResult("Account is deleted.");
+        if (user.getUserStatus() == UserStatus.DELETED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
         }
 
-        emailUtilsService.sendResetPasswordEmail(user);
+        Locale locale = headerUtils.getLanguage();
+        emailUtilsService.sendResetPasswordEmail(user, locale);
         return new SuccessResult();
     }
 
     @Override
     public Result verifyAccount(JWTToken jwtToken) {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(jwtToken);
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload(jwtToken);
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
-        if(user.getUserStatus() == UserStatus.ACTIVE) {
-            return new ErrorResult("Account is already active.");
+        if (user.getUserStatus() == UserStatus.ACTIVE) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-already-active"));
         }
-        if(user.getUserStatus() == UserStatus.SUSPENDED) {
-            return new ErrorResult("Account is suspended.");
+        if (user.getUserStatus() == UserStatus.SUSPENDED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
         }
-        if(user.getUserStatus() == UserStatus.DELETED) {
-            return new ErrorResult("Account is deleted.");
+        if (user.getUserStatus() == UserStatus.DELETED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
         }
 
-        if(user.getUserStatus() == UserStatus.PASSIVE) {
+        if (user.getUserStatus() == UserStatus.PASSIVE) {
             userService.selfActivateUser(user.getId());
-            return new SuccessResult("Account activated.");
+            return new SuccessResult(messageUtils.getMessage("auth.success.account-activated"));
         }
 
-        return new ErrorResult("Unknown user state.");
+        return new ErrorResult(messageUtils.getMessage("generic.error"));
     }
 
     @Override
     public Result resetPassword(PasswordResetDTO passwordResetDTO) {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload(passwordResetDTO.getJwtToken());
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload(passwordResetDTO.getJwtToken());
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
-        if(user.getUserStatus() == UserStatus.PASSIVE) {
-            return new ErrorResult("Account is not activated yet.");
+        if (user.getUserStatus() == UserStatus.PASSIVE) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-not-active"));
         }
-        if(user.getUserStatus() == UserStatus.SUSPENDED) {
-            return new ErrorResult("Account is suspended.");
+        if (user.getUserStatus() == UserStatus.SUSPENDED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
         }
-        if(user.getUserStatus() == UserStatus.DELETED) {
-            return new ErrorResult("Account is deleted.");
+        if (user.getUserStatus() == UserStatus.DELETED) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
         }
 
-        if(user.getUserStatus() == UserStatus.ACTIVE) {
+        if (user.getUserStatus() == UserStatus.ACTIVE) {
             userService.changePassword(user.getId(), passwordResetDTO.getPassword());
-            return new SuccessResult("Password reset.");
+            return new SuccessResult(messageUtils.getMessage("auth.success.password-reset"));
         }
 
-        return new ErrorResult("Unknown user state.");
+        return new ErrorResult(messageUtils.getMessage("generic.error"));
     }
 
 }

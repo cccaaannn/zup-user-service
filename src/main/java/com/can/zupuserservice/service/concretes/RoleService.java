@@ -9,6 +9,7 @@ import com.can.zupuserservice.core.utilities.result.concretes.SuccessResult;
 import com.can.zupuserservice.data.entity.Role;
 import com.can.zupuserservice.repository.RoleRepository;
 import com.can.zupuserservice.service.abstracts.IRoleService;
+import com.can.zupuserservice.util.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +20,12 @@ import java.util.List;
 public class RoleService implements IRoleService {
 
     private final RoleRepository roleRepository;
+    private final MessageUtils messageUtils;
 
     @Autowired
-    public RoleService(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository, MessageUtils messageUtils) {
         this.roleRepository = roleRepository;
+        this.messageUtils = messageUtils;
     }
 
     @Override
@@ -39,10 +42,10 @@ public class RoleService implements IRoleService {
     @Transactional
     public Result add(Role role) {
         if(roleRepository.findByName(role.getName()).isPresent()) {
-           return new ErrorResult("Role %s already exists".formatted(role.getName()));
+           return new ErrorResult(messageUtils.getMessage("role.error.already-exists", role.getName()));
         }
         roleRepository.save(role);
-        return new SuccessResult("Role %s added".formatted(role.getName()));
+        return new SuccessResult(messageUtils.getMessage("role.success.added", role.getName()));
     }
 
 }

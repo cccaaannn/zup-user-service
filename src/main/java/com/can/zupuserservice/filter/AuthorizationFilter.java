@@ -5,7 +5,7 @@ import com.can.zupuserservice.core.security.jwt.exceptions.JWTException;
 import com.can.zupuserservice.core.utilities.result.abstracts.Result;
 import com.can.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import com.can.zupuserservice.data.dto.TokenPayload;
-import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
+import com.can.zupuserservice.util.TokenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -29,12 +29,12 @@ import java.util.Objects;
 @Slf4j
 public class AuthorizationFilter extends OncePerRequestFilter {
 
-    private final ITokenUtilsService tokenUtilsService;
+    private final TokenUtils tokenUtils;
 
     private final List<String> ALLOWED_PATHS;
 
-    public AuthorizationFilter(ITokenUtilsService tokenUtilsService, List<String> ALLOWED_PATHS) {
-        this.tokenUtilsService = tokenUtilsService;
+    public AuthorizationFilter(TokenUtils tokenUtils, List<String> ALLOWED_PATHS) {
+        this.tokenUtils = tokenUtils;
         this.ALLOWED_PATHS = ALLOWED_PATHS;
     }
 
@@ -65,7 +65,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         // Verify token
         TokenPayload tokenPayload;
         try {
-            tokenPayload = tokenUtilsService.getTokenPayload(new JWTToken(token));
+            tokenPayload = tokenUtils.getTokenPayload(new JWTToken(token));
         } catch (JWTException e) {
             logger.info("Jwt verification failed. Host ip: %s (%s)".formatted(request.getRemoteHost(), e.getMessage()));
 

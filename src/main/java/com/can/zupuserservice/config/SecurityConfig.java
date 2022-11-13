@@ -2,7 +2,7 @@ package com.can.zupuserservice.config;
 
 import com.can.zupuserservice.data.enums.DefaultRoles;
 import com.can.zupuserservice.filter.AuthorizationFilter;
-import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
+import com.can.zupuserservice.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,7 +19,7 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-    private final ITokenUtilsService tokenUtilsService;
+    private final TokenUtils tokenUtils;
 
     private static final List<String> ALLOWED_PATHS = List.of(
             "api/user/v1/auth",
@@ -28,14 +28,14 @@ public class SecurityConfig {
     );
 
     @Autowired
-    public SecurityConfig(ITokenUtilsService tokenUtilsService) {
-        this.tokenUtilsService = tokenUtilsService;
+    public SecurityConfig(TokenUtils tokenUtils) {
+        this.tokenUtils = tokenUtils;
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        OncePerRequestFilter authorizationFilter = new AuthorizationFilter(tokenUtilsService, ALLOWED_PATHS);
+        OncePerRequestFilter authorizationFilter = new AuthorizationFilter(tokenUtils, ALLOWED_PATHS);
 
         http.csrf().disable();
         http.cors().disable();

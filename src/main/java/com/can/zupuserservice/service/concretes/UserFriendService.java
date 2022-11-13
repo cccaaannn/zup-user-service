@@ -11,9 +11,10 @@ import com.can.zupuserservice.data.dto.user.UserDTO;
 import com.can.zupuserservice.data.entity.UserFriend;
 import com.can.zupuserservice.mapper.UserMapper;
 import com.can.zupuserservice.repository.UserFriendRepository;
-import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
 import com.can.zupuserservice.service.abstracts.IUserFriendService;
 import com.can.zupuserservice.service.abstracts.IUserService;
+import com.can.zupuserservice.util.MessageUtils;
+import com.can.zupuserservice.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -28,19 +29,21 @@ public class UserFriendService implements IUserFriendService {
 
     private final UserFriendRepository userFriendRepository;
     private final IUserService userService;
-    private final ITokenUtilsService tokenUtilsService;
+    private final TokenUtils tokenUtils;
     private final UserMapper userMapper;
+    private final MessageUtils messageUtils;
 
     @Autowired
-    public UserFriendService(UserFriendRepository userFriendRepository, @Lazy IUserService userService, ITokenUtilsService tokenUtilsService, UserMapper userMapper) {
+    public UserFriendService(UserFriendRepository userFriendRepository, @Lazy IUserService userService, TokenUtils tokenUtils, UserMapper userMapper, MessageUtils messageUtils) {
         this.userFriendRepository = userFriendRepository;
         this.userService = userService;
-        this.tokenUtilsService = tokenUtilsService;
+        this.tokenUtils = tokenUtils;
         this.userMapper = userMapper;
+        this.messageUtils = messageUtils;
     }
 
     public DataResult<List<UserDTO>> getFriends() {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload();
         return new SuccessDataResult<>(userMapper.usersToUserDTOs(userFriendRepository.getFriends(tokenPayload.getId())));
     }
 
@@ -52,7 +55,7 @@ public class UserFriendService implements IUserFriendService {
     @Override
     @Transactional
     public Result toggleFriend(UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload();
         UserFriend oldFriend = userFriendRepository.getFriend(tokenPayload.getId(), userFriendAddDeleteDTO.getUserFriendId()).orElse(null);
         if (Objects.isNull(oldFriend)) {
             return addByFriendId(userFriendAddDeleteDTO);
@@ -68,30 +71,30 @@ public class UserFriendService implements IUserFriendService {
         UserFriend userFriend = new UserFriend();
         userFriend.setFriendUser(userService.getByIdInternal(userFriendAddDeleteDTO.getUserFriendId()).getData());
 
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload();
         UserFriend oldFriend = userFriendRepository.getFriend(tokenPayload.getId(), userFriendAddDeleteDTO.getUserFriendId()).orElse(null);
         if (Objects.nonNull(oldFriend)) {
-            return new ErrorResult("This user is already added as friend.");
+            return new ErrorResult(messageUtils.getMessage("user-friend.error.already-exists"));
         }
 
         userFriend.setOwnUserFromId(tokenPayload.getId());
 
         userFriendRepository.save(userFriend);
 
-        return new SuccessResult("User %s added to friends list.".formatted(userFriend.getFriendUser().getUsername()));
+        return new SuccessResult(messageUtils.getMessage("user-friend.success.added", userFriend.getFriendUser().getUsername()));
     }
 
     @Override
     @Transactional
     public Result deleteByFriendId(UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload();
         UserFriend oldFriend = userFriendRepository.getFriend(tokenPayload.getId(), userFriendAddDeleteDTO.getUserFriendId()).orElse(null);
         if (Objects.isNull(oldFriend)) {
-            return new ErrorResult("This user was not added as friend.");
+            return new ErrorResult(messageUtils.getMessage("user-friend.error.not-exists"));
         }
 
         userFriendRepository.delete(oldFriend);
-        return new SuccessResult("User %s removed from friends list.".formatted(oldFriend.getFriendUser().getUsername()));
+        return new SuccessResult(messageUtils.getMessage("user-friend.success.removed", oldFriend.getFriendUser().getUsername()));
     }
 
 }

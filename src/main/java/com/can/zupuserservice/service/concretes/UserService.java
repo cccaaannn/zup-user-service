@@ -23,9 +23,10 @@ import com.can.zupuserservice.data.enums.DefaultRoles;
 import com.can.zupuserservice.mapper.UserMapper;
 import com.can.zupuserservice.repository.UserRepository;
 import com.can.zupuserservice.service.abstracts.IRoleService;
-import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
 import com.can.zupuserservice.service.abstracts.IUserFriendService;
 import com.can.zupuserservice.service.abstracts.IUserService;
+import com.can.zupuserservice.util.MessageUtils;
+import com.can.zupuserservice.util.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,8 +45,9 @@ public class UserService implements IUserService {
     private final IRoleService roleService;
     private final IUserFriendService userFriendService;
     private final IPasswordEncryptor passwordEncryptor;
-    private final ITokenUtilsService tokenUtilsService;
+    private final TokenUtils tokenUtils;
     private final UserMapper userMapper;
+    private final MessageUtils messageUtils;
 
     @Autowired
     public UserService(
@@ -53,15 +55,17 @@ public class UserService implements IUserService {
             IRoleService roleService,
             IUserFriendService userFriendService,
             IPasswordEncryptor passwordEncryptor,
-            ITokenUtilsService tokenUtilsService,
-            UserMapper userMapper
+            TokenUtils tokenUtils,
+            UserMapper userMapper,
+            MessageUtils messageUtils
     ) {
         this.userRepository = userRepository;
         this.roleService = roleService;
         this.userFriendService = userFriendService;
         this.passwordEncryptor = passwordEncryptor;
-        this.tokenUtilsService = tokenUtilsService;
+        this.tokenUtils = tokenUtils;
         this.userMapper = userMapper;
+        this.messageUtils = messageUtils;
     }
 
     @Override
@@ -82,11 +86,10 @@ public class UserService implements IUserService {
         UserDTO userDTO = userMapper.userToUserDTO(user);
         userDTO.setEmail(null);
 
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload();
         UserFriend userFriend = userFriendService.getFriend(tokenPayload.getId(), userId).getData().orElse(null);
         userDTO.setIsFriend(Objects.nonNull(userFriend));
 
-        // TODO return different parts of the user for different permissions.
         return new SuccessDataResult<>(userDTO);
     }
 
@@ -137,7 +140,7 @@ public class UserService implements IUserService {
     @Transactional
     public Result selfActivateUser(Long id) {
         userRepository.changeUserStatus(id, UserStatus.ACTIVE);
-        return new SuccessResult("User activated.");
+        return new SuccessResult(messageUtils.getMessage("user.success.activated"));
     }
 
     @Override
@@ -147,7 +150,7 @@ public class UserService implements IUserService {
             throw new ForbiddenException();
         }
         userRepository.changeUserStatus(id, UserStatus.ACTIVE);
-        return new SuccessResult("User activated.");
+        return new SuccessResult(messageUtils.getMessage("user.success.activated"));
     }
 
     @Override
@@ -157,7 +160,7 @@ public class UserService implements IUserService {
             throw new ForbiddenException();
         }
         userRepository.changeUserStatus(id, UserStatus.SUSPENDED);
-        return new SuccessResult("User suspended.");
+        return new SuccessResult(messageUtils.getMessage("user.success.suspended"));
     }
 
     @Override
@@ -165,7 +168,7 @@ public class UserService implements IUserService {
     public Result changePassword(Long id, String newPassword) {
         String encryptedPassword = passwordEncryptor.encrypt(newPassword);
         userRepository.updatePassword(id, encryptedPassword);
-        return new SuccessResult("Password changed.");
+        return new SuccessResult(messageUtils.getMessage("user.success.password-changed"));
     }
 
     @Override
@@ -176,7 +179,7 @@ public class UserService implements IUserService {
 //            return new ErrorResult("Username %s is taken".formatted(userAddDTO.getUsername()));
 //        }
         if (isExistsByEmail(userAddDTO.getEmail())) {
-            return new ErrorDataResult<>("Email %s is taken".formatted(userAddDTO.getEmail()));
+            return new ErrorDataResult<>(messageUtils.getMessage("user.error.email-taken", userAddDTO.getEmail()));
         }
 
         UserOnlineStatus userOnlineStatus = new UserOnlineStatus();
@@ -190,7 +193,7 @@ public class UserService implements IUserService {
 
         userRepository.save(user);
 
-        return new SuccessDataResult<>(user, "User %s added".formatted(user.getUsername()));
+        return new SuccessDataResult<>(user, messageUtils.getMessage("user.success.added", user.getUsername()));
     }
 
     @Override
@@ -200,7 +203,7 @@ public class UserService implements IUserService {
         // Test for username availability
         Optional<User> usernameTest = userRepository.findByUsername(userUpdateDTO.getUsername());
         if (usernameTest.isPresent() && !usernameTest.get().getId().equals(userUpdateDTO.getId())) {
-            return new ErrorResult("Username %s is taken".formatted(userUpdateDTO.getUsername()));
+            return new ErrorResult(messageUtils.getMessage("user.error.username-taken", userUpdateDTO.getUsername()));
         }
 
         // Get existing user
@@ -215,7 +218,7 @@ public class UserService implements IUserService {
 
         userRepository.save(user);
 
-        return new SuccessResult("User %s updated".formatted(user.getUsername()));
+        return new SuccessResult(messageUtils.getMessage("user.success.updated", user.getUsername()));
     }
 
     @Override
@@ -224,12 +227,12 @@ public class UserService implements IUserService {
         User user = userRepository.findById(userDeleteDTO.getId()).orElseThrow(NotFoundException::new);
         String username = user.getUsername();
         userRepository.delete(user);
-        return new SuccessResult("User %s deleted".formatted(username));
+        return new SuccessResult(messageUtils.getMessage("user.success.deleted", username));
     }
 
 
     private boolean canChangeStatus(Long id) {
-        TokenPayload tokenPayload = tokenUtilsService.getTokenPayload();
+        TokenPayload tokenPayload = tokenUtils.getTokenPayload();
         if (
                 tokenPayload.getRole().equals(DefaultRoles.ADMIN.name) ||
                         tokenPayload.getRole().equals(DefaultRoles.SYS_ADMIN.name) ||

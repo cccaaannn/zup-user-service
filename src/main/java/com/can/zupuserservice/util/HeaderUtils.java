@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 @Component
-public class HeaderOperations {
+public class HeaderUtils {
 
     private String isAuthorizationHeaderValid(String header) {
         try {
@@ -50,6 +50,21 @@ public class HeaderOperations {
             }
         }
         return null;
+    }
+
+    public Locale getLanguageWithDefaultFallback() {
+        ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        Locale locale = new Locale(Locale.ENGLISH.getLanguage());
+        if (Objects.isNull(servletRequestAttributes)) {
+            return locale;
+        }
+        try {
+            HttpServletRequest request = servletRequestAttributes.getRequest();
+            return new Locale(request.getHeader("Accept-Language"));
+        }
+        catch (Exception e) {
+            return locale;
+        }
     }
 
     public String getIP() {
