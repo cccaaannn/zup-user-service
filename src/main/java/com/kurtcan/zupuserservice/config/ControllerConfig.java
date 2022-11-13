@@ -4,7 +4,9 @@ import com.kurtcan.zupuserservice.core.exception.ForbiddenException;
 import com.kurtcan.zupuserservice.core.security.jwt.exceptions.JWTException;
 import com.kurtcan.zupuserservice.core.exception.NotFoundException;
 import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
+import com.kurtcan.zupuserservice.util.HeaderUtils;
 import org.springframework.beans.TypeMismatchException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,18 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @ControllerAdvice
 public class ControllerConfig {
+
+    private final HeaderUtils headerUtils;
+
+    @Autowired
+    public ControllerConfig(HeaderUtils headerUtils) {
+        this.headerUtils = headerUtils;
+    }
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
@@ -62,14 +72,14 @@ public class ControllerConfig {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler({ValidationException.class, ConstraintViolationException.class})
     public ResponseEntity<Object> notFoundException(ValidationException ex) {
-//        ex.printStackTrace();
+        ex.printStackTrace();
         return new ResponseEntity<>(new ErrorResult("Parameter validation failed"), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = {JWTException.class})
     public ResponseEntity<Object> jwtVerificationException(JWTException ex) {
-        ex.printStackTrace();
+//        ex.printStackTrace();
         return new ResponseEntity<>(new ErrorResult("Not authorized"), new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }
 
@@ -77,6 +87,7 @@ public class ControllerConfig {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
+        Locale.setDefault(headerUtils.getLanguage());
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
