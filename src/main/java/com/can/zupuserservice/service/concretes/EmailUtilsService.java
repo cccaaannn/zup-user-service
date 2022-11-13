@@ -7,7 +7,8 @@ import com.can.zupuserservice.data.dto.TokenPayload;
 import com.can.zupuserservice.data.entity.User;
 import com.can.zupuserservice.data.enums.TokenType;
 import com.can.zupuserservice.service.abstracts.IEmailUtilsService;
-import com.can.zupuserservice.service.abstracts.ITokenUtilsService;
+import com.can.zupuserservice.util.MessageUtils;
+import com.can.zupuserservice.util.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 @Slf4j
@@ -24,8 +26,9 @@ import java.util.Map;
 public class EmailUtilsService implements IEmailUtilsService {
 
     private final IEmailClient emailClient;
-    private final ITokenUtilsService tokenUtilsService;
+    private final TokenUtils tokenUtils;
     private final SpringTemplateEngine templateEngine;
+    private final MessageUtils messageUtils;
 
     @Value("${frontend.base-url}")
     String frontendBaseUrl;
@@ -37,25 +40,33 @@ public class EmailUtilsService implements IEmailUtilsService {
     String verifyAccountPath;
 
     @Autowired
-    public EmailUtilsService(IEmailClient emailClient, ITokenUtilsService tokenUtilsService, SpringTemplateEngine templateEngine) {
+    public EmailUtilsService(IEmailClient emailClient, TokenUtils tokenUtils, SpringTemplateEngine templateEngine, MessageUtils messageUtils) {
         this.emailClient = emailClient;
-        this.tokenUtilsService = tokenUtilsService;
+        this.tokenUtils = tokenUtils;
         this.templateEngine = templateEngine;
+        this.messageUtils = messageUtils;
     }
 
     @Async
-    public void sendVerifyAccountEmail(User user) {
+    @Override
+    public void sendVerifyAccountEmail(User user, Locale locale) {
         TemplateEmailDTO templateEmailDTO = new TemplateEmailDTO();
-        templateEmailDTO.setEmailSubject("Activate account");
+        templateEmailDTO.setEmailSubject(messageUtils.getMessage(locale, "email.activate-account.subject"));
         templateEmailDTO.setEmailTemplate("verify-account-email-template");
         templateEmailDTO.setTo(user.getEmail());
 
         TokenPayload tokenPayload = new TokenPayload(user, TokenType.ACCOUNT_ACTIVATION);
-        JWTToken jwtToken = tokenUtilsService.generateToken(tokenPayload);
+        JWTToken jwtToken = tokenUtils.generateToken(tokenPayload);
 
         String url = frontendBaseUrl + verifyAccountPath + "?token=" + jwtToken.getToken();
 
         Map<String, Object> properties = new HashMap<>();
+        properties.put("header", messageUtils.getMessage(locale, "email.activate-account.body.header"));
+        properties.put("header_sub", messageUtils.getMessage(locale, "email.activate-account.body.header-sub"));
+        properties.put("welcome", messageUtils.getMessage(locale, "email.activate-account.body.welcome"));
+        properties.put("greet", messageUtils.getMessage(locale, "email.activate-account.body.greet"));
+        properties.put("button", messageUtils.getMessage(locale, "email.activate-account.body.button"));
+        properties.put("detail", messageUtils.getMessage(locale, "email.activate-account.body.detail"));
         properties.put("USERNAME", user.getUsername());
         properties.put("URL", url);
 
@@ -65,18 +76,23 @@ public class EmailUtilsService implements IEmailUtilsService {
     }
 
     @Async
-    public void sendResetPasswordEmail(User user) {
+    @Override
+    public void sendResetPasswordEmail(User user, Locale locale) {
         TemplateEmailDTO templateEmailDTO = new TemplateEmailDTO();
-        templateEmailDTO.setEmailSubject("Reset password");
+        templateEmailDTO.setEmailSubject(messageUtils.getMessage(locale, "email.reset-password.subject"));
         templateEmailDTO.setEmailTemplate("reset-password-email-template");
         templateEmailDTO.setTo(user.getEmail());
 
         TokenPayload tokenPayload = new TokenPayload(user, TokenType.PASSWORD_RESET);
-        JWTToken jwtToken = tokenUtilsService.generateToken(tokenPayload);
+        JWTToken jwtToken = tokenUtils.generateToken(tokenPayload);
 
         String url = frontendBaseUrl + resetPasswordPath + "?token=" + jwtToken.getToken();
-
         Map<String, Object> properties = new HashMap<>();
+        properties.put("header", messageUtils.getMessage(locale, "email.reset-password.body.header"));
+        properties.put("header_sub", messageUtils.getMessage(locale, "email.reset-password.body.header-sub"));
+        properties.put("greet", messageUtils.getMessage(locale, "email.reset-password.body.greet"));
+        properties.put("button", messageUtils.getMessage(locale, "email.reset-password.body.button"));
+        properties.put("detail", messageUtils.getMessage(locale, "email.reset-password.body.detail"));
         properties.put("USERNAME", user.getUsername());
         properties.put("URL", url);
 
@@ -92,8 +108,7 @@ public class EmailUtilsService implements IEmailUtilsService {
         try {
             emailClient.send(templateEmailDTO.getTo(), templateEmailDTO.getEmailSubject(), parsedHtml);
             log.info("Email sent to %s".formatted(templateEmailDTO.getTo()));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.warn(e.getMessage());
             return false;
         }

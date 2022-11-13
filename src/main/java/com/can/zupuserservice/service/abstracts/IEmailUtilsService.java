@@ -2,8 +2,10 @@ package com.can.zupuserservice.service.abstracts;
 
 import com.can.zupuserservice.data.entity.User;
 
-public interface IEmailUtilsService {
-    void sendVerifyAccountEmail(User user);
+import java.util.Locale;
 
-    void sendResetPasswordEmail(User user);
+public interface IEmailUtilsService {
+    void sendVerifyAccountEmail(User user, Locale locale);
+
+    void sendResetPasswordEmail(User user, Locale locale);
 }
