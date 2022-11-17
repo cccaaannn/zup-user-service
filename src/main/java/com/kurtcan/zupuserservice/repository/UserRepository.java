@@ -18,7 +18,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("FROM User u WHERE u.id IN :ids")
-    Page<User> findByIds(List<Long> ids, PageRequest pageRequest);
+    Page<User> findByIds(@Param("ids") List<Long> ids, PageRequest pageRequest);
 
     @Query("FROM User WHERE username=:username")
     Optional<User> findByUsername(@Param("username") String username);
