@@ -51,15 +51,15 @@ public class UserController extends BaseController {
         return httpResult(userService.getByUsername(username));
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> add(@Valid @RequestBody UserAddDTO userAddDTO) {
-        return httpResult(userService.add(userAddDTO));
-    }
-
-    @PutMapping("")
-    public ResponseEntity<?> update(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-        return httpResult(userService.update(userUpdateDTO));
-    }
+//    @PostMapping("")
+//    public ResponseEntity<?> add(@Valid @RequestBody UserAddDTO userAddDTO) {
+//        return httpResult(userService.add(userAddDTO));
+//    }
+//
+//    @PutMapping("")
+//    public ResponseEntity<?> update(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
+//        return httpResult(userService.update(userUpdateDTO));
+//    }
 
     @PatchMapping("/{userId}/activate")
     public ResponseEntity<?> activate(@PathVariable Long userId) {

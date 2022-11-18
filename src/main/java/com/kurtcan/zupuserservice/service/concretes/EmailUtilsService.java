@@ -2,6 +2,7 @@ package com.kurtcan.zupuserservice.service.concretes;
 
 import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.kurtcan.zupuserservice.core.utilities.email.abstracts.IEmailClient;
+import com.kurtcan.zupuserservice.core.utilities.email.dtos.Email;
 import com.kurtcan.zupuserservice.data.dto.TemplateEmailDTO;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.data.entity.User;
@@ -18,6 +19,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -106,7 +108,8 @@ public class EmailUtilsService implements IEmailUtilsService {
         context.setVariables(templateEmailDTO.getProperties());
         String parsedHtml = templateEngine.process(templateEmailDTO.getEmailTemplate(), context);
         try {
-            emailClient.send(templateEmailDTO.getTo(), templateEmailDTO.getEmailSubject(), parsedHtml);
+            Email email = Email.builder().to(List.of(templateEmailDTO.getTo())).subject(templateEmailDTO.getEmailSubject()).body(parsedHtml).build();
+            emailClient.send(email);
             log.info("Email sent to %s".formatted(templateEmailDTO.getTo()));
         } catch (Exception e) {
             log.warn(e.getMessage());
