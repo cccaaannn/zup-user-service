@@ -22,11 +22,13 @@ import com.kurtcan.zupuserservice.service.abstracts.IUserService;
 import com.kurtcan.zupuserservice.util.HeaderUtils;
 import com.kurtcan.zupuserservice.util.MessageUtils;
 import com.kurtcan.zupuserservice.util.TokenUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
 
+@Slf4j
 @Service
 public class AuthService implements IAuthService {
 
@@ -82,14 +84,9 @@ public class AuthService implements IAuthService {
     public Result sendVerifyAccountEmail(UserEmailDTO userEmailDTO) {
         User user = userService.getByEmail(userEmailDTO.getEmail()).getData();
 
-        if (user.getUserStatus() == UserStatus.ACTIVE) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-already-active"));
-        }
-        if (user.getUserStatus() == UserStatus.SUSPENDED) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
-        }
-        if (user.getUserStatus() == UserStatus.DELETED) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
+        Result statusResult = userStatusCheck(user.getUserStatus(), UserStatus.ACTIVE);
+        if (!statusResult.getStatus()) {
+            return statusResult;
         }
 
         Locale locale = headerUtils.getLanguage();
@@ -101,14 +98,9 @@ public class AuthService implements IAuthService {
     public Result sendForgetPasswordEmail(UserEmailDTO userEmailDTO) {
         User user = userService.getByEmail(userEmailDTO.getEmail()).getData();
 
-        if (user.getUserStatus() == UserStatus.PASSIVE) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-not-active"));
-        }
-        if (user.getUserStatus() == UserStatus.SUSPENDED) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
-        }
-        if (user.getUserStatus() == UserStatus.DELETED) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
+        Result statusResult = userStatusCheck(user.getUserStatus(), UserStatus.PASSIVE);
+        if (!statusResult.getStatus()) {
+            return statusResult;
         }
 
         Locale locale = headerUtils.getLanguage();
@@ -122,22 +114,18 @@ public class AuthService implements IAuthService {
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
-        if (user.getUserStatus() == UserStatus.ACTIVE) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-already-active"));
-        }
-        if (user.getUserStatus() == UserStatus.SUSPENDED) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
-        }
-        if (user.getUserStatus() == UserStatus.DELETED) {
-            return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
+        Result statusResult = userStatusCheck(user.getUserStatus(), UserStatus.ACTIVE);
+        if (!statusResult.getStatus()) {
+            return statusResult;
         }
 
-        if (user.getUserStatus() == UserStatus.PASSIVE) {
-            userService.selfActivateUser(user.getId());
-            return new SuccessResult(messageUtils.getMessage("auth.success.account-activated"));
+        if (user.getUserStatus() != UserStatus.PASSIVE) {
+            log.error("Invalid db state detected, user {} has a status of {}", user.getId(), user.getUserStatus());
+            return new ErrorResult(messageUtils.getMessage("generic.error"));
         }
 
-        return new ErrorResult(messageUtils.getMessage("generic.error"));
+        userService.selfActivateUser(user.getId());
+        return new SuccessResult(messageUtils.getMessage("auth.success.account-activated"));
     }
 
     @Override
@@ -146,22 +134,39 @@ public class AuthService implements IAuthService {
 
         User user = userService.getByIdInternal(tokenPayload.getId()).getData();
 
-        if (user.getUserStatus() == UserStatus.PASSIVE) {
+        Result statusResult = userStatusCheck(user.getUserStatus(), UserStatus.PASSIVE);
+        if (!statusResult.getStatus()) {
+            return statusResult;
+        }
+
+        if (user.getUserStatus() != UserStatus.ACTIVE) {
+            log.error("Invalid db state detected, user {} has a status of {}", user.getId(), user.getUserStatus());
+            return new ErrorResult(messageUtils.getMessage("generic.error"));
+        }
+
+        userService.changePassword(user.getId(), passwordResetDTO.getPassword());
+        return new SuccessResult(messageUtils.getMessage("auth.success.password-reset"));
+    }
+
+
+    /*
+     * failOn parameter can be specified to state the failing user status, and can be ACTIVE or PASSIVE
+     */
+    private Result userStatusCheck(UserStatus userStatus, UserStatus failOn) {
+        if (UserStatus.ACTIVE.equals(failOn) && userStatus == UserStatus.ACTIVE) {
+            return new ErrorResult(messageUtils.getMessage("auth.error.account-already-active"));
+        }
+        if (UserStatus.PASSIVE.equals(failOn) && userStatus == UserStatus.PASSIVE) {
             return new ErrorResult(messageUtils.getMessage("auth.error.account-not-active"));
         }
-        if (user.getUserStatus() == UserStatus.SUSPENDED) {
+        if (userStatus == UserStatus.SUSPENDED) {
             return new ErrorResult(messageUtils.getMessage("auth.error.account-suspended"));
         }
-        if (user.getUserStatus() == UserStatus.DELETED) {
+        if (userStatus == UserStatus.DELETED) {
             return new ErrorResult(messageUtils.getMessage("auth.error.account-deleted"));
         }
 
-        if (user.getUserStatus() == UserStatus.ACTIVE) {
-            userService.changePassword(user.getId(), passwordResetDTO.getPassword());
-            return new SuccessResult(messageUtils.getMessage("auth.success.password-reset"));
-        }
-
-        return new ErrorResult(messageUtils.getMessage("generic.error"));
+        return new SuccessResult();
     }
 
 }
