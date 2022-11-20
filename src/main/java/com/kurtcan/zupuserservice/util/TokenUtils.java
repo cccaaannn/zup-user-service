@@ -1,9 +1,9 @@
 package com.kurtcan.zupuserservice.util;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.kurtcan.zupuserservice.core.exception.ForbiddenException;
 import com.kurtcan.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
 import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
+import com.kurtcan.zupuserservice.core.security.jwt.exceptions.JWTException;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class TokenUtils {
         this.jwtUtils = jwtUtils;
     }
 
-    public TokenPayload getTokenPayload() throws ForbiddenException, JWTVerificationException {
+    public TokenPayload getTokenPayload() throws JWTException {
         String token = headerUtils.getToken();
         if (Objects.isNull(token)) {
             throw new ForbiddenException("Token is null");
