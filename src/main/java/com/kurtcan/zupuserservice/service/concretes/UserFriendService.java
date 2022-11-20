@@ -15,6 +15,7 @@ import com.kurtcan.zupuserservice.service.abstracts.IUserFriendService;
 import com.kurtcan.zupuserservice.service.abstracts.IUserService;
 import com.kurtcan.zupuserservice.util.MessageUtils;
 import com.kurtcan.zupuserservice.util.TokenUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserFriendService implements IUserFriendService {
 
@@ -81,6 +83,7 @@ public class UserFriendService implements IUserFriendService {
 
         userFriendRepository.save(userFriend);
 
+        log.info("User {} added user {} as friend", tokenPayload.getId(), userFriendAddDeleteDTO.getUserFriendId());
         return new SuccessResult(messageUtils.getMessage("user-friend.success.added", userFriend.getFriendUser().getUsername()));
     }
 
@@ -94,6 +97,8 @@ public class UserFriendService implements IUserFriendService {
         }
 
         userFriendRepository.delete(oldFriend);
+
+        log.info("User {} removed user {} from friend list", tokenPayload.getId(), userFriendAddDeleteDTO.getUserFriendId());
         return new SuccessResult(messageUtils.getMessage("user-friend.success.removed", oldFriend.getFriendUser().getUsername()));
     }
 

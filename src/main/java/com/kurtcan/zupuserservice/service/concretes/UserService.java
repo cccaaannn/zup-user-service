@@ -27,6 +27,7 @@ import com.kurtcan.zupuserservice.service.abstracts.IUserFriendService;
 import com.kurtcan.zupuserservice.service.abstracts.IUserService;
 import com.kurtcan.zupuserservice.util.MessageUtils;
 import com.kurtcan.zupuserservice.util.TokenUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class UserService implements IUserService {
 
@@ -139,7 +141,11 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public Result selfActivateUser(Long id) {
-        userRepository.changeUserStatus(id, UserStatus.ACTIVE);
+        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        user.setUserStatus(UserStatus.ACTIVE);
+        userRepository.save(user);
+
+        log.info("User {} changed password, username: {}", id, user.getUsername());
         return new SuccessResult(messageUtils.getMessage("user.success.activated"));
     }
 
@@ -149,7 +155,11 @@ public class UserService implements IUserService {
         if (!canChangeStatus(id)) {
             throw new ForbiddenException();
         }
-        userRepository.changeUserStatus(id, UserStatus.ACTIVE);
+        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        user.setUserStatus(UserStatus.ACTIVE);
+        userRepository.save(user);
+
+        log.info("User {} changed password, username: {}", id, user.getUsername());
         return new SuccessResult(messageUtils.getMessage("user.success.activated"));
     }
 
@@ -159,15 +169,23 @@ public class UserService implements IUserService {
         if (!canChangeStatus(id)) {
             throw new ForbiddenException();
         }
-        userRepository.changeUserStatus(id, UserStatus.SUSPENDED);
+        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        user.setUserStatus(UserStatus.SUSPENDED);
+        userRepository.save(user);
+
+        log.info("User {} changed password, username: {}", id, user.getUsername());
         return new SuccessResult(messageUtils.getMessage("user.success.suspended"));
     }
 
     @Override
     @Transactional
     public Result changePassword(Long id, String newPassword) {
+        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
         String encryptedPassword = passwordEncryptor.encrypt(newPassword);
-        userRepository.updatePassword(id, encryptedPassword);
+        user.setPassword(encryptedPassword);
+        userRepository.save(user);
+
+        log.info("User {} changed password, username: {}", id, user.getUsername());
         return new SuccessResult(messageUtils.getMessage("user.success.password-changed"));
     }
 
@@ -193,6 +211,7 @@ public class UserService implements IUserService {
 
         userRepository.save(user);
 
+        log.info("User {} created, username: {}", user.getId(), user.getUsername());
         return new SuccessDataResult<>(user, messageUtils.getMessage("user.success.added", user.getUsername()));
     }
 
@@ -218,6 +237,7 @@ public class UserService implements IUserService {
 
         userRepository.save(user);
 
+        log.info("User {} updated, username: {}", user.getId(), user.getUsername());
         return new SuccessResult(messageUtils.getMessage("user.success.updated", user.getUsername()));
     }
 
@@ -227,6 +247,8 @@ public class UserService implements IUserService {
         User user = userRepository.findById(userDeleteDTO.getId()).orElseThrow(NotFoundException::new);
         String username = user.getUsername();
         userRepository.delete(user);
+
+        log.info("User {} deleted, username: {}", user.getId(), user.getUsername());
         return new SuccessResult(messageUtils.getMessage("user.success.deleted", username));
     }
 

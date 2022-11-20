@@ -63,6 +63,7 @@ public class AuthService implements IAuthService {
 
         JWTToken jwtToken = tokenUtils.generateToken(new TokenPayload(user, TokenType.AUTHENTICATION));
 
+        log.info("User {} login, username: {}", user.getId(), user.getUsername());
         return new SuccessDataResult<>(jwtToken);
     }
 
@@ -77,6 +78,7 @@ public class AuthService implements IAuthService {
         Locale locale = headerUtils.getLanguage();
         emailUtilsService.sendVerifyAccountEmail(userResult.getData(), locale);
 
+        log.info("User {} signup, username: {}", userResult.getData().getId(), userResult.getData().getUsername());
         return new SuccessResult(messageUtils.getMessage("auth.success.account-created"));
     }
 
@@ -125,6 +127,8 @@ public class AuthService implements IAuthService {
         }
 
         userService.selfActivateUser(user.getId());
+
+        log.info("User {} verified account, username: {}", user.getId(), user.getUsername());
         return new SuccessResult(messageUtils.getMessage("auth.success.account-activated"));
     }
 
@@ -145,6 +149,8 @@ public class AuthService implements IAuthService {
         }
 
         userService.changePassword(user.getId(), passwordResetDTO.getPassword());
+
+        log.info("User {} reset password, username: {}", user.getId(), user.getUsername());
         return new SuccessResult(messageUtils.getMessage("auth.success.password-reset"));
     }
 

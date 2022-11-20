@@ -110,7 +110,7 @@ public class EmailUtilsService implements IEmailUtilsService {
         try {
             Email email = Email.builder().to(List.of(templateEmailDTO.getTo())).subject(templateEmailDTO.getEmailSubject()).body(parsedHtml).build();
             emailClient.send(email);
-            log.info("Email sent to %s".formatted(templateEmailDTO.getTo()));
+            log.info("Email sent to {}", templateEmailDTO.getTo());
         } catch (Exception e) {
             log.warn(e.getMessage());
             return false;
