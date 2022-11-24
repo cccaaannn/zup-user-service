@@ -8,9 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
@@ -19,14 +17,12 @@ import java.util.Date;
 public class EntityBase {
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false)
-    private Date createdAt;
+    private OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)
-    private Date updatedAt;
+    private OffsetDateTime updatedAt;
 
     @Column(name = "created_by", nullable = true)
     private Long createdBy;

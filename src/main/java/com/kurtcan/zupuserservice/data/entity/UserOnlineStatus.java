@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.data.entity;
 
-import com.kurtcan.zupuserservice.core.data.enums.OnlineStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kurtcan.zupuserservice.core.data.enums.OnlineStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Data
 @AllArgsConstructor
@@ -28,9 +28,8 @@ public class UserOnlineStatus {
     private OnlineStatus onlineStatus = OnlineStatus.OFFLINE;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "last_online", nullable = false)
-    private Date lastOnline;
+    private OffsetDateTime lastOnline;
 
     @ToString.Exclude
     @JsonIgnore

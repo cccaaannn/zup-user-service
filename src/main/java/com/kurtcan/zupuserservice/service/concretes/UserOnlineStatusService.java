@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.time.OffsetDateTime;
 
 @Slf4j
 @Service
@@ -43,7 +43,7 @@ public class UserOnlineStatusService implements IUserOnlineStatusService {
             throw new ForbiddenException(messageUtils.getMessage("user-online-status.error.not-own-status"));
         }
 
-        userOnlineStatusRepository.updateUserOnlineStatus(userId, newStatus.status, new Date());
+        userOnlineStatusRepository.updateUserOnlineStatus(userId, newStatus.status, OffsetDateTime.now());
 
         log.info("User {} status updated to {}", userId, newStatus.status);
         return new SuccessResult(messageUtils.getMessage("user-online-status.success.updated"));
