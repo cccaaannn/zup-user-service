@@ -11,7 +11,9 @@ spring:
     hibernate:
       ddl-auto: validate
     properties:
-      hibernate.format_sql: false
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.MySQL5Dialect
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
