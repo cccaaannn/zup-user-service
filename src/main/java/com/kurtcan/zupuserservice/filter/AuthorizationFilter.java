@@ -2,7 +2,7 @@ package com.kurtcan.zupuserservice.filter;
 
 import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.kurtcan.zupuserservice.core.security.jwt.exceptions.JWTException;
-import com.kurtcan.zupuserservice.core.utilities.result.abstracts.Result;
+import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
 import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.util.TokenUtils;

@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.service.abstracts;
 
-import com.kurtcan.zupuserservice.core.utilities.result.abstracts.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.abstracts.Result;
+import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
+import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
 import com.kurtcan.zupuserservice.data.entity.Role;
 
 import java.util.List;

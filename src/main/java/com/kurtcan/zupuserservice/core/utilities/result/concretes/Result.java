@@ -1,5 +1,6 @@
-package com.kurtcan.zupuserservice.core.utilities.result.abstracts;
+package com.kurtcan.zupuserservice.core.utilities.result.concretes;
 
+import com.kurtcan.zupuserservice.core.utilities.result.abstracts.IResult;
 import lombok.*;
 
 @Data

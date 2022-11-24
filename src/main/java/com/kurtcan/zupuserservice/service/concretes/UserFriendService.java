@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
-import com.kurtcan.zupuserservice.core.utilities.result.abstracts.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.abstracts.Result;
+import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
+import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
 import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
 import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
 import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessResult;

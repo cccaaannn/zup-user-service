@@ -1,6 +1,5 @@
 package com.kurtcan.zupuserservice.core.utilities.result.concretes;
 
-import com.kurtcan.zupuserservice.core.utilities.result.abstracts.DataResult;
 import com.kurtcan.zupuserservice.core.utilities.result.abstracts.IDataResult;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
