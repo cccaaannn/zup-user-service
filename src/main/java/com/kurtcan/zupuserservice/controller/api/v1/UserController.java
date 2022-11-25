@@ -1,10 +1,8 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
-import com.kurtcan.zupuserservice.core.controller.abstracts.BaseController;
 import com.kurtcan.zupuserservice.core.data.enums.PageOrder;
-import com.kurtcan.zupuserservice.data.dto.user.UserAddDTO;
+import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.data.dto.user.UserDeleteDTO;
-import com.kurtcan.zupuserservice.data.dto.user.UserUpdateDTO;
 import com.kurtcan.zupuserservice.data.enums.UserSort;
 import com.kurtcan.zupuserservice.service.abstracts.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,7 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("${api.path.prefix}/users")
-public class UserController extends BaseController {
+public class UserController {
 
     private final IUserService userService;
 
@@ -38,42 +36,42 @@ public class UserController extends BaseController {
             @RequestParam(name = "order", defaultValue = "desc", required = true) PageOrder order,
             @RequestParam(name = "ids", defaultValue = "", required = false) List<Long> ids
     ) {
-        return httpResult(userService.getAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order.ORDER_NAME), sort.SORT_NAME)), ids));
+        return HttpApiResponseBuilder.toHttpResponse(userService.getAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(order.ORDER_NAME), sort.SORT_NAME)), ids));
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getById(@PathVariable Long userId) {
-        return httpResult(userService.getById(userId));
+        return HttpApiResponseBuilder.toHttpResponse(userService.getById(userId));
     }
 
     @GetMapping("/username/{username}")
     public ResponseEntity<?> getByUsername(@PathVariable String username) {
-        return httpResult(userService.getByUsername(username));
+        return HttpApiResponseBuilder.toHttpResponse(userService.getByUsername(username));
     }
 
 //    @PostMapping("")
 //    public ResponseEntity<?> add(@Valid @RequestBody UserAddDTO userAddDTO) {
-//        return httpResult(userService.add(userAddDTO));
+//        return HttpApiResponseBuilder.toHttpResponse(userService.add(userAddDTO));
 //    }
 //
 //    @PutMapping("")
 //    public ResponseEntity<?> update(@Valid @RequestBody UserUpdateDTO userUpdateDTO) {
-//        return httpResult(userService.update(userUpdateDTO));
+//        return HttpApiResponseBuilder.toHttpResponse(userService.update(userUpdateDTO));
 //    }
 
     @PatchMapping("/{userId}/activate")
     public ResponseEntity<?> activate(@PathVariable Long userId) {
-        return httpResult(userService.activateUser(userId));
+        return HttpApiResponseBuilder.toHttpResponse(userService.activateUser(userId));
     }
 
     @PatchMapping("/{userId}/suspend")
     public ResponseEntity<?> suspend(@PathVariable Long userId) {
-        return httpResult(userService.suspendUser(userId));
+        return HttpApiResponseBuilder.toHttpResponse(userService.suspendUser(userId));
     }
 
     @DeleteMapping("")
     public ResponseEntity<?> delete(@Valid @RequestBody UserDeleteDTO userDeleteDTO) {
-        return httpResult(userService.delete(userDeleteDTO));
+        return HttpApiResponseBuilder.toHttpResponse(userService.delete(userDeleteDTO));
     }
 
 }

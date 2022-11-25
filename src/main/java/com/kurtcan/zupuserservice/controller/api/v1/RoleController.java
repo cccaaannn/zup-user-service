@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
-import com.kurtcan.zupuserservice.core.controller.abstracts.BaseController;
+import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.service.abstracts.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("${api.path.prefix}/roles")
-public class RoleController extends BaseController {
+public class RoleController {
 
     private final IRoleService roleService;
 
@@ -22,7 +22,7 @@ public class RoleController extends BaseController {
 
     @GetMapping("")
     public ResponseEntity<?> getAll() {
-        return httpResult(roleService.getAll());
+        return HttpApiResponseBuilder.toHttpResponse(roleService.getAll());
     }
 
 }

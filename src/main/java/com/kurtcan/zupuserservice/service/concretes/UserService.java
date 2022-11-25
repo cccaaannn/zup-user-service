@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
-import com.kurtcan.zupuserservice.core.data.enums.UserStatus;
+import com.kurtcan.zupuserservice.data.enums.UserStatus;
 import com.kurtcan.zupuserservice.core.exception.ForbiddenException;
 import com.kurtcan.zupuserservice.core.exception.NotFoundException;
 import com.kurtcan.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;

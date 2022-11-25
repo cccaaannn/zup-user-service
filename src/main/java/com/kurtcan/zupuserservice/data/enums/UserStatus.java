@@ -1,4 +1,4 @@
-package com.kurtcan.zupuserservice.core.data.enums;
+package com.kurtcan.zupuserservice.data.enums;
 
 public enum UserStatus {
     PASSIVE(0),

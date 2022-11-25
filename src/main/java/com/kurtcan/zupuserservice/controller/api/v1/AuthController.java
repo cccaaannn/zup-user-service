@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
-import com.kurtcan.zupuserservice.core.controller.abstracts.BaseController;
+import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.data.dto.auth.LoginDTO;
 import com.kurtcan.zupuserservice.data.dto.user.UserAddDTO;
 import com.kurtcan.zupuserservice.service.abstracts.IAuthService;
@@ -16,7 +16,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("${api.path.prefix}/auth")
-public class AuthController extends BaseController {
+public class AuthController {
 
     private final IAuthService authService;
 
@@ -27,12 +27,12 @@ public class AuthController extends BaseController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO loginDTO) {
-        return httpResult(authService.login(loginDTO));
+        return HttpApiResponseBuilder.toHttpResponse(authService.login(loginDTO));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody UserAddDTO userAddDTO) {
-        return httpResult(authService.signup(userAddDTO));
+        return HttpApiResponseBuilder.toHttpResponse(authService.signup(userAddDTO));
     }
 
 }

@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.data.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kurtcan.zupuserservice.core.data.enums.UserStatus;
+import com.kurtcan.zupuserservice.data.enums.UserStatus;
 import com.kurtcan.zupuserservice.data.dto.rold.RoleDTO;
 import com.kurtcan.zupuserservice.data.entity.UserOnlineStatus;
 import lombok.AllArgsConstructor;

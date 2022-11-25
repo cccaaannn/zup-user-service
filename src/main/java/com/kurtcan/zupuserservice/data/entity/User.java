@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.data.entity;
 
-import com.kurtcan.zupuserservice.core.data.enums.UserStatus;
+import com.kurtcan.zupuserservice.data.enums.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

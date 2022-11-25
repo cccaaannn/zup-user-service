@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
-import com.kurtcan.zupuserservice.core.data.enums.UserStatus;
+import com.kurtcan.zupuserservice.data.enums.UserStatus;
 import com.kurtcan.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
 import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
 import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;

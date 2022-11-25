@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
-import com.kurtcan.zupuserservice.core.controller.abstracts.BaseController;
+import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.data.dto.UserFriend.UserFriendAddDeleteDTO;
 import com.kurtcan.zupuserservice.service.abstracts.IUserFriendService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("${api.path.prefix}/users/friends")
-public class UserFriendController extends BaseController {
+public class UserFriendController {
 
     private final IUserFriendService userFriendService;
 
@@ -22,22 +22,22 @@ public class UserFriendController extends BaseController {
 
     @GetMapping("")
     public ResponseEntity<?> getAllFriends() {
-        return httpResult(userFriendService.getFriends());
+        return HttpApiResponseBuilder.toHttpResponse(userFriendService.getFriends());
     }
 
     @PutMapping("/toggle")
     public ResponseEntity<?> toggleFriend(@Valid @RequestBody UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
-        return httpResult(userFriendService.toggleFriend(userFriendAddDeleteDTO));
+        return HttpApiResponseBuilder.toHttpResponse(userFriendService.toggleFriend(userFriendAddDeleteDTO));
     }
 
     @PostMapping("")
     public ResponseEntity<?> addByFriendId(@Valid @RequestBody UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
-        return httpResult(userFriendService.addByFriendId(userFriendAddDeleteDTO));
+        return HttpApiResponseBuilder.toHttpResponse(userFriendService.addByFriendId(userFriendAddDeleteDTO));
     }
 
     @DeleteMapping("")
     public ResponseEntity<?> deleteByFriendId(@Valid @RequestBody UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
-        return httpResult(userFriendService.deleteByFriendId(userFriendAddDeleteDTO));
+        return HttpApiResponseBuilder.toHttpResponse(userFriendService.deleteByFriendId(userFriendAddDeleteDTO));
     }
 
 }

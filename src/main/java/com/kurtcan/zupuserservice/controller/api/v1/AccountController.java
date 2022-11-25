@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
-import com.kurtcan.zupuserservice.core.controller.abstracts.BaseController;
 import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
+import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.data.dto.auth.PasswordResetDTO;
 import com.kurtcan.zupuserservice.data.dto.auth.UserEmailDTO;
 import com.kurtcan.zupuserservice.service.abstracts.IAuthService;
@@ -16,7 +16,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("${api.path.prefix}/account")
-public class AccountController extends BaseController {
+public class AccountController {
 
     private final IAuthService authService;
 
@@ -27,22 +27,22 @@ public class AccountController extends BaseController {
 
     @PostMapping("/send-verification")
     public ResponseEntity<?> sendVerifyAccountEmail(@Valid @RequestBody UserEmailDTO userEmailDTO) {
-        return httpResult(authService.sendVerifyAccountEmail(userEmailDTO));
+        return HttpApiResponseBuilder.toHttpResponse(authService.sendVerifyAccountEmail(userEmailDTO));
     }
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyAccount(@Valid @RequestBody JWTToken jwtToken) {
-        return httpResult(authService.verifyAccount(jwtToken));
+        return HttpApiResponseBuilder.toHttpResponse(authService.verifyAccount(jwtToken));
     }
 
     @PostMapping("/password/send-reset")
     public ResponseEntity<?> sendForgetPasswordEmail(@Valid @RequestBody UserEmailDTO userEmailDTO) {
-        return httpResult(authService.sendForgetPasswordEmail(userEmailDTO));
+        return HttpApiResponseBuilder.toHttpResponse(authService.sendForgetPasswordEmail(userEmailDTO));
     }
 
     @PostMapping("/password/reset")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody PasswordResetDTO passwordResetDTO) {
-        return httpResult(authService.resetPassword(passwordResetDTO));
+        return HttpApiResponseBuilder.toHttpResponse(authService.resetPassword(passwordResetDTO));
     }
 
 }
