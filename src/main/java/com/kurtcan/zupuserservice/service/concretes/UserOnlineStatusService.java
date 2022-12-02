@@ -1,11 +1,11 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
-import com.kurtcan.zupuserservice.core.data.enums.OnlineStatus;
-import com.kurtcan.zupuserservice.core.exception.ForbiddenException;
-import com.kurtcan.zupuserservice.core.exception.NotFoundException;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessResult;
+import com.kurtcan.javacore.data.enums.OnlineStatus;
+import com.kurtcan.javacore.exception.ForbiddenException;
+import com.kurtcan.javacore.exception.ResourceNotFoundException;
+import com.kurtcan.javacore.utilities.result.concretes.Result;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessDataResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessResult;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.data.entity.UserOnlineStatus;
 import com.kurtcan.zupuserservice.repository.UserOnlineStatusRepository;
@@ -37,7 +37,7 @@ public class UserOnlineStatusService implements IUserOnlineStatusService {
     @Override
     @Transactional
     public Result setUserOnlineStatus(Long userId, OnlineStatus newStatus) {
-        userOnlineStatusRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
+        userOnlineStatusRepository.findByUserId(userId).orElseThrow(ResourceNotFoundException::new);
         TokenPayload tokenPayload = tokenUtils.getTokenPayload();
         if (!tokenPayload.getId().equals(userId)) {
             throw new ForbiddenException(messageUtils.getMessage("user-online-status.error.not-own-status"));
@@ -51,7 +51,7 @@ public class UserOnlineStatusService implements IUserOnlineStatusService {
 
     @Override
     public SuccessDataResult<UserOnlineStatus> getUserOnlineStatus(Long userId) {
-        UserOnlineStatus userOnlineStatus = userOnlineStatusRepository.findByUserId(userId).orElseThrow(NotFoundException::new);
+        UserOnlineStatus userOnlineStatus = userOnlineStatusRepository.findByUserId(userId).orElseThrow(ResourceNotFoundException::new);
         return new SuccessDataResult<>(userOnlineStatus);
     }
 

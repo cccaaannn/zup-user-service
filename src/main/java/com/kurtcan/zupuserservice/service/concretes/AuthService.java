@@ -1,14 +1,14 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
 import com.kurtcan.zupuserservice.data.enums.UserStatus;
-import com.kurtcan.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
-import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorDataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessResult;
+import com.kurtcan.javacore.security.encryption.abstracts.IPasswordEncryptor;
+import com.kurtcan.javacore.security.jwt.data.dto.JWTToken;
+import com.kurtcan.javacore.utilities.result.concretes.DataResult;
+import com.kurtcan.javacore.utilities.result.concretes.Result;
+import com.kurtcan.javacore.utilities.result.concretes.ErrorDataResult;
+import com.kurtcan.javacore.utilities.result.concretes.ErrorResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessDataResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessResult;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.data.dto.auth.LoginDTO;
 import com.kurtcan.zupuserservice.data.dto.auth.PasswordResetDTO;

@@ -1,10 +1,10 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessResult;
+import com.kurtcan.javacore.utilities.result.concretes.DataResult;
+import com.kurtcan.javacore.utilities.result.concretes.Result;
+import com.kurtcan.javacore.utilities.result.concretes.ErrorResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessDataResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessResult;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.data.dto.UserFriend.UserFriendAddDeleteDTO;
 import com.kurtcan.zupuserservice.data.dto.user.UserDTO;

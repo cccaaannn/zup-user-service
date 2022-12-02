@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.config;
 
-import com.kurtcan.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
-import com.kurtcan.zupuserservice.core.security.encryption.jasypt.JasyptEncryptionAdapter;
+import com.kurtcan.javacore.security.encryption.abstracts.IPasswordEncryptor;
+import com.kurtcan.javacore.security.encryption.jasypt.JasyptPasswordEncryptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,7 +10,7 @@ public class EncryptionConfig {
 
     @Bean
     IPasswordEncryptor getPasswordEncryptor() {
-        return new JasyptEncryptionAdapter();
+        return new JasyptPasswordEncryptor();
     }
 
 }

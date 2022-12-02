@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.interceptor;
 
-import com.kurtcan.zupuserservice.core.exception.ForbiddenException;
+import com.kurtcan.javacore.exception.ForbiddenException;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.data.entity.EntityBase;
 import com.kurtcan.zupuserservice.util.TokenUtils;
@@ -8,8 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 @Slf4j
 @Component

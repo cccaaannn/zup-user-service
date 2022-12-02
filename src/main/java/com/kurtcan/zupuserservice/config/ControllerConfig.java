@@ -1,9 +1,10 @@
 package com.kurtcan.zupuserservice.config;
 
-import com.kurtcan.zupuserservice.core.exception.ForbiddenException;
-import com.kurtcan.zupuserservice.core.security.jwt.exceptions.JWTException;
-import com.kurtcan.zupuserservice.core.exception.NotFoundException;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
+import com.kurtcan.javacore.exception.ForbiddenException;
+import com.kurtcan.javacore.exception.UnAuthorizedException;
+import com.kurtcan.javacore.security.jwt.exceptions.JWTException;
+import com.kurtcan.javacore.exception.ResourceNotFoundException;
+import com.kurtcan.javacore.utilities.result.concretes.ErrorResult;
 import com.kurtcan.zupuserservice.util.HeaderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
@@ -51,8 +52,8 @@ public class ControllerConfig {
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Object> notFoundException(NotFoundException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> notFoundException(ResourceNotFoundException ex) {
         return new ResponseEntity<>(new ErrorResult(ex.getMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
@@ -73,6 +74,12 @@ public class ControllerConfig {
     public ResponseEntity<Object> notFoundException(ValidationException ex) {
         log.info("Validation exception, {}", ex.getMessage());
         return new ResponseEntity<>(new ErrorResult("Parameter validation failed"), new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = {UnAuthorizedException.class})
+    public ResponseEntity<Object> unAuthorizedException(UnAuthorizedException ex) {
+        return new ResponseEntity<>(new ErrorResult("Not authorized"), new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }
 
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED)

@@ -1,15 +1,15 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
 import com.kurtcan.zupuserservice.data.enums.UserStatus;
-import com.kurtcan.zupuserservice.core.exception.ForbiddenException;
-import com.kurtcan.zupuserservice.core.exception.NotFoundException;
-import com.kurtcan.zupuserservice.core.security.encryption.abstracts.IPasswordEncryptor;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorDataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessResult;
+import com.kurtcan.javacore.exception.ForbiddenException;
+import com.kurtcan.javacore.exception.ResourceNotFoundException;
+import com.kurtcan.javacore.security.encryption.abstracts.IPasswordEncryptor;
+import com.kurtcan.javacore.utilities.result.concretes.DataResult;
+import com.kurtcan.javacore.utilities.result.concretes.Result;
+import com.kurtcan.javacore.utilities.result.concretes.ErrorDataResult;
+import com.kurtcan.javacore.utilities.result.concretes.ErrorResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessDataResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessResult;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.data.dto.user.UserAddDTO;
 import com.kurtcan.zupuserservice.data.dto.user.UserDTO;
@@ -84,7 +84,7 @@ public class UserService implements IUserService {
 
     @Override
     public DataResult<UserDTO> getById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(userId).orElseThrow(ResourceNotFoundException::new);
         UserDTO userDTO = userMapper.userToUserDTO(user);
         userDTO.setEmail(null);
 
@@ -97,12 +97,12 @@ public class UserService implements IUserService {
 
     @Override
     public DataResult<User> getByIdInternal(Long userId) {
-        return new SuccessDataResult<>(userRepository.findById(userId).orElseThrow(NotFoundException::new));
+        return new SuccessDataResult<>(userRepository.findById(userId).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Override
     public DataResult<UserDTO> getByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(NotFoundException::new);
+        User user = userRepository.findByUsername(username).orElseThrow(ResourceNotFoundException::new);
         UserDTO userDTO = userMapper.userToUserDTO(user);
         userDTO.setEmail(null);
         return new SuccessDataResult<>(userDTO);
@@ -110,12 +110,12 @@ public class UserService implements IUserService {
 
     @Override
     public DataResult<User> getByUsernameInternal(String username) {
-        return new SuccessDataResult<>(userRepository.findByUsername(username).orElseThrow(NotFoundException::new));
+        return new SuccessDataResult<>(userRepository.findByUsername(username).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Override
     public DataResult<User> getByEmail(String email) {
-        return new SuccessDataResult<>(userRepository.findByEmail(email).orElseThrow(NotFoundException::new));
+        return new SuccessDataResult<>(userRepository.findByEmail(email).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Override
@@ -141,7 +141,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public Result selfActivateUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         user.setUserStatus(UserStatus.ACTIVE);
         userRepository.save(user);
 
@@ -155,7 +155,7 @@ public class UserService implements IUserService {
         if (!canChangeStatus(id)) {
             throw new ForbiddenException();
         }
-        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         user.setUserStatus(UserStatus.ACTIVE);
         userRepository.save(user);
 
@@ -169,7 +169,7 @@ public class UserService implements IUserService {
         if (!canChangeStatus(id)) {
             throw new ForbiddenException();
         }
-        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         user.setUserStatus(UserStatus.SUSPENDED);
         userRepository.save(user);
 
@@ -180,7 +180,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public Result changePassword(Long id, String newPassword) {
-        User user = userRepository.findById(id).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
         String encryptedPassword = passwordEncryptor.encrypt(newPassword);
         user.setPassword(encryptedPassword);
         userRepository.save(user);
@@ -226,7 +226,7 @@ public class UserService implements IUserService {
         }
 
         // Get existing user
-        User user = userRepository.findById(userUpdateDTO.getId()).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(userUpdateDTO.getId()).orElseThrow(ResourceNotFoundException::new);
 
         user.setUsername(userUpdateDTO.getUsername());
 
@@ -244,7 +244,7 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public Result delete(UserDeleteDTO userDeleteDTO) {
-        User user = userRepository.findById(userDeleteDTO.getId()).orElseThrow(NotFoundException::new);
+        User user = userRepository.findById(userDeleteDTO.getId()).orElseThrow(ResourceNotFoundException::new);
         String username = user.getUsername();
         userRepository.delete(user);
 

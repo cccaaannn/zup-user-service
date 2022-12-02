@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.service.abstracts;
 
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
+import com.kurtcan.javacore.utilities.result.concretes.DataResult;
+import com.kurtcan.javacore.utilities.result.concretes.Result;
 import com.kurtcan.zupuserservice.data.dto.UserFriend.UserFriendAddDeleteDTO;
 import com.kurtcan.zupuserservice.data.dto.user.UserDTO;
 import com.kurtcan.zupuserservice.data.entity.UserFriend;

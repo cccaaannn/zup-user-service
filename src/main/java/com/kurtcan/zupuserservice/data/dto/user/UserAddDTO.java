@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.data.dto.user;
 
-import com.kurtcan.zupuserservice.core.security.validation.password.aspects.annotations.StrongPassword;
+import com.kurtcan.javacore.security.validation.password.aspects.annotations.StrongPassword;
 import com.kurtcan.zupuserservice.aspect.annotation.UniqueEmail;
 import com.kurtcan.zupuserservice.aspect.annotation.UniqueUsername;
 import lombok.AllArgsConstructor;

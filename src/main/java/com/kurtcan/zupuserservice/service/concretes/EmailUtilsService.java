@@ -1,8 +1,8 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
-import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
-import com.kurtcan.zupuserservice.core.utilities.email.abstracts.IEmailClient;
-import com.kurtcan.zupuserservice.core.utilities.email.dtos.Email;
+import com.kurtcan.javacore.security.jwt.data.dto.JWTToken;
+import com.kurtcan.javacore.utilities.email.abstracts.IEmailClient;
+import com.kurtcan.javacore.utilities.email.dtos.Email;
 import com.kurtcan.zupuserservice.data.dto.TemplateEmailDTO;
 import com.kurtcan.zupuserservice.data.dto.TokenPayload;
 import com.kurtcan.zupuserservice.data.entity.User;
@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.util.HashMap;
 import java.util.List;

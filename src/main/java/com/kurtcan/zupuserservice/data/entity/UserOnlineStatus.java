@@ -1,14 +1,14 @@
 package com.kurtcan.zupuserservice.data.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.kurtcan.zupuserservice.core.data.enums.OnlineStatus;
+import com.kurtcan.javacore.data.enums.OnlineStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
 @Data

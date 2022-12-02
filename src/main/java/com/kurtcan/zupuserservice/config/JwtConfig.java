@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.config;
 
-import com.kurtcan.zupuserservice.core.security.jwt.abstracts.IJWTUtils;
-import com.kurtcan.zupuserservice.core.security.jwt.auth0.JWTUtils;
+import com.kurtcan.javacore.security.jwt.abstracts.IJWTUtils;
+import com.kurtcan.javacore.security.jwt.auth0.JWTUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

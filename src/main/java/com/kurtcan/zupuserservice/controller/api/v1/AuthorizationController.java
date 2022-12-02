@@ -1,8 +1,8 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
 
-import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
-import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
+import com.kurtcan.javacore.security.jwt.data.dto.JWTToken;
+import com.kurtcan.javacore.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.service.abstracts.IAuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

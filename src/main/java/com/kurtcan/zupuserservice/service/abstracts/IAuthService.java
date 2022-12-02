@@ -1,8 +1,8 @@
 package com.kurtcan.zupuserservice.service.abstracts;
 
-import com.kurtcan.zupuserservice.core.security.jwt.data.dto.JWTToken;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
+import com.kurtcan.javacore.security.jwt.data.dto.JWTToken;
+import com.kurtcan.javacore.utilities.result.concretes.DataResult;
+import com.kurtcan.javacore.utilities.result.concretes.Result;
 import com.kurtcan.zupuserservice.data.dto.auth.LoginDTO;
 import com.kurtcan.zupuserservice.data.dto.auth.PasswordResetDTO;
 import com.kurtcan.zupuserservice.data.dto.auth.UserEmailDTO;

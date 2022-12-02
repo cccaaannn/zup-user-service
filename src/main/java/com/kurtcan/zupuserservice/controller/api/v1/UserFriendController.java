@@ -1,6 +1,7 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
-import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
+import com.kurtcan.javacore.security.aspects.annotations.SecuredRoute;
+import com.kurtcan.javacore.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.data.dto.UserFriend.UserFriendAddDeleteDTO;
 import com.kurtcan.zupuserservice.service.abstracts.IUserFriendService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +21,25 @@ public class UserFriendController {
         this.userFriendService = userFriendService;
     }
 
+    @SecuredRoute
     @GetMapping("")
     public ResponseEntity<?> getAllFriends() {
         return HttpApiResponseBuilder.toHttpResponse(userFriendService.getFriends());
     }
 
+    @SecuredRoute
     @PutMapping("/toggle")
     public ResponseEntity<?> toggleFriend(@Valid @RequestBody UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
         return HttpApiResponseBuilder.toHttpResponse(userFriendService.toggleFriend(userFriendAddDeleteDTO));
     }
 
+    @SecuredRoute
     @PostMapping("")
     public ResponseEntity<?> addByFriendId(@Valid @RequestBody UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
         return HttpApiResponseBuilder.toHttpResponse(userFriendService.addByFriendId(userFriendAddDeleteDTO));
     }
 
+    @SecuredRoute
     @DeleteMapping("")
     public ResponseEntity<?> deleteByFriendId(@Valid @RequestBody UserFriendAddDeleteDTO userFriendAddDeleteDTO) {
         return HttpApiResponseBuilder.toHttpResponse(userFriendService.deleteByFriendId(userFriendAddDeleteDTO));

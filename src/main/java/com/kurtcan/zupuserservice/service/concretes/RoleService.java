@@ -1,11 +1,11 @@
 package com.kurtcan.zupuserservice.service.concretes;
 
-import com.kurtcan.zupuserservice.core.exception.NotFoundException;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.DataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.Result;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.ErrorResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessDataResult;
-import com.kurtcan.zupuserservice.core.utilities.result.concretes.SuccessResult;
+import com.kurtcan.javacore.exception.ResourceNotFoundException;
+import com.kurtcan.javacore.utilities.result.concretes.DataResult;
+import com.kurtcan.javacore.utilities.result.concretes.Result;
+import com.kurtcan.javacore.utilities.result.concretes.ErrorResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessDataResult;
+import com.kurtcan.javacore.utilities.result.concretes.SuccessResult;
 import com.kurtcan.zupuserservice.data.entity.Role;
 import com.kurtcan.zupuserservice.repository.RoleRepository;
 import com.kurtcan.zupuserservice.service.abstracts.IRoleService;
@@ -32,7 +32,7 @@ public class RoleService implements IRoleService {
 
     @Override
     public DataResult<Role> getByName(String name) {
-        return new SuccessDataResult<>(roleRepository.findByName(name).orElseThrow(NotFoundException::new));
+        return new SuccessDataResult<>(roleRepository.findByName(name).orElseThrow(ResourceNotFoundException::new));
     }
 
     @Override

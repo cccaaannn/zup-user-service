@@ -1,6 +1,6 @@
 package com.kurtcan.zupuserservice.controller.api.v1;
 
-import com.kurtcan.zupuserservice.core.utilities.http.response.concrete.HttpApiResponseBuilder;
+import com.kurtcan.javacore.utilities.http.response.concrete.HttpApiResponseBuilder;
 import com.kurtcan.zupuserservice.data.dto.auth.LoginDTO;
 import com.kurtcan.zupuserservice.data.dto.user.UserAddDTO;
 import com.kurtcan.zupuserservice.service.abstracts.IAuthService;
