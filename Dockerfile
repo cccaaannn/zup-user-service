@@ -8,7 +8,7 @@ ENV MAVEN_PACKAGE_TOKEN=$MAVEN_PACKAGE_TOKEN
 
 # Download dependencies
 COPY pom.xml .
-COPY .mvn .
+COPY .mvn .mvn
 RUN mvn --settings .mvn/project-settings.xml dependency:go-offline
 
 # Build app
