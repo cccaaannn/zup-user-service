@@ -66,6 +66,7 @@ public class ControllerConfig {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<Object> notFoundException(HttpMessageConversionException ex) {
+        log.info("HttpMessageConversionException, {}", ex.getMessage());
         return new ResponseEntity<>(new ErrorResult("Provided http method is not supported"), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 

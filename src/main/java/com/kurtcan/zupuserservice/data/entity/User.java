@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class User extends EntityBase {
 
     @Id
@@ -38,7 +38,7 @@ public class User extends EntityBase {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "ownUser", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "ownUser", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<UserFriend> userFriends;
 
     //    @ToString.Exclude
