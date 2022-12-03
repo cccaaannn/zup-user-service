@@ -1,7 +1,7 @@
 package com.kurtcan.zupuserservice.config;
 
 import com.kurtcan.javacore.utilities.email.abstracts.IEmailClient;
-import com.kurtcan.javacore.utilities.email.javax.gmail.JavaxGmailClient;
+import com.kurtcan.javacore.utilities.email.jakarta.gmail.JakartaGmailClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +17,7 @@ public class EmailClientConfig {
 
     @Bean
     public IEmailClient getEmailClient() {
-        return new JavaxGmailClient(username, password);
+        return new JakartaGmailClient(username, password);
     }
 
 }
