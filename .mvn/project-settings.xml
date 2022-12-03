@@ -1,0 +1,99 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd">
+    <mirrors>
+        <!-- maven -->
+        <mirror>
+            <id>maven</id>
+            <mirrorOf>central</mirrorOf>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </mirror>
+    </mirrors>
+
+    <!-- maven -->
+    <profiles>
+
+        <profile>
+            <id>maven</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                </repository>
+                <repository>
+                    <id>central1</id>
+                    <url>https://repo1.maven.org/maven2/</url>
+                </repository>
+                <repository>
+                    <id>central2</id>
+                    <url>https://repo1.maven.org/maven2</url>
+                </repository>
+
+                <!-- Vaadin stuff -->
+                <repository>
+                    <id>vaadin-addons</id>
+                    <url>http://maven.vaadin.com/vaadin-addons</url>
+                </repository>
+                <repository>
+                    <id>vaadin-prereleases</id>
+                    <name>Vaadin Pre-releases</name>
+                    <url>https://maven.vaadin.com/vaadin-prereleases</url>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>central</id>
+                    <url>http://central</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+                <pluginRepository>
+                    <id>central1</id>
+                    <url>https://repo.maven.apache.org/maven2</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+
+        <!-- github -->
+        <profile>
+            <id>github</id>
+            <repositories>
+                <repository>
+                    <id>central</id>
+                    <url>https://repo1.maven.org/maven2</url>
+                </repository>
+                <repository>
+                    <id>github</id>
+                    <url>https://maven.pkg.github.com/cccaaannn/javacore</url>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+        </profile>
+
+    </profiles>
+
+
+    <activeProfiles>
+        <activeProfile>maven</activeProfile>
+        <activeProfile>github</activeProfile>
+    </activeProfiles>
+
+
+    <servers>
+        <server>
+            <id>github</id>
+            <username>cccaaannn</username>
+            <!-- Read only -->
+            <password>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</password>
+        </server>
+    </servers>
+</settings>
