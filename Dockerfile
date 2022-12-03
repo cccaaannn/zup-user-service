@@ -1,6 +1,10 @@
 # Build stage
-FROM maven:3.8.6-openjdk-19 AS builder
+FROM maven:3.8.6-eclipse-temurin-19-alpine AS builder
 WORKDIR zup/
+
+# This is for fetching maven package from github registry, has to be provided during build
+ARG MAVEN_PACKAGE_TOKEN
+ENV MAVEN_PACKAGE_TOKEN=$MAVEN_PACKAGE_TOKEN
 
 # Download dependencies
 COPY pom.xml .

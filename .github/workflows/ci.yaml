@@ -18,7 +18,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t cccaaannn/zup-user-service:latest .
+        run: docker build --build-arg MAVEN_PACKAGE_TOKEN=${{ secrets.GITHUB_TOKEN }} -t cccaaannn/zup-user-service:latest .
 
       - name: Push Docker image
         run: docker push cccaaannn/zup-user-service
