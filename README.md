@@ -9,12 +9,15 @@
 ## Configurations
 - Fill the empty parts of `application-prod.yaml`.
 
+## Build requirements
+- MAVEN_PACKAGE_TOKEN GitHub token to download `cccaaannn/javacore` package.
 
 ## Build native
 ````shell
+expoty MAVEN_PACKAGE_TOKEN=<MAVEN_PACKAGE_TOKEN>
 mvn --settings .mvn/project-settings.xml clean install
 ````
 ## Build for docker
 ````shell
-docker build -t cccaaannn/zup-user-service:latest .
+docker build --build-arg MAVEN_PACKAGE_TOKEN=<MAVEN_PACKAGE_TOKEN> -t cccaaannn/zup-user-service:latest .
 ````
