@@ -32,13 +32,13 @@ public class EmailUtilsService implements IEmailUtilsService {
     private final SpringTemplateEngine templateEngine;
     private final MessageUtils messageUtils;
 
-    @Value("${frontend.base-url}")
+    @Value("${frontend.base_url}")
     String frontendBaseUrl;
 
-    @Value("${frontend.reset-password-path}")
+    @Value("${frontend.reset_password_path}")
     String resetPasswordPath;
 
-    @Value("${frontend.verify-account-path}")
+    @Value("${frontend.verify_account_path}")
     String verifyAccountPath;
 
     @Autowired

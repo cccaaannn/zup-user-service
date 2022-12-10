@@ -11,16 +11,16 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class JwtConfig {
 
-    @Value("${security.jwt.secret-key}")
+    @Value("${security.jwt.secret_key}")
     String secretKey;
 
-    @Value("${security.jwt.authentication-expires-after}")
+    @Value("${security.jwt.authentication_expires_after}")
     Long authenticationExpiresAfter;
 
-    @Value("${security.jwt.account_activation-expires-after}")
+    @Value("${security.jwt.account_activation_expires_after}")
     Long accountActivationExpiresAfter;
 
-    @Value("${security.jwt.password_reset-expires-after}")
+    @Value("${security.jwt.password_reset_expires_after}")
     Long passwordResetExpiresAfter;
 
     @Bean

@@ -24,10 +24,10 @@ api:
 
 security:
   jwt:
-#    secret-key:
-    authentication-expires-after: 86400000
-    account_activation-expires-after: 86400000
-    password_reset-expires-after: 86400000
+#    secret_key:
+    authentication_expires_after: 86400000
+    account_activation_expires_after: 86400000
+    password_reset_expires_after: 86400000
 
 email:
   gmail:
@@ -35,6 +35,6 @@ email:
 #    password:
 
 frontend:
-  base-url: http://localhost:4200
-  reset-password-path: /auth/reset-password
-  verify-account-path: /auth/verify-account
+  base_url: http://localhost:4200
+  reset_password_path: /auth/reset-password
+  verify_account_path: /auth/verify-account
