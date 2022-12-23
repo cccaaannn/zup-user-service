@@ -9,7 +9,8 @@
 ### Services
 - [Frontend](https://github.com/cccaaannn/zup-frontend)
 - [User service](https://github.com/cccaaannn/zup-user-service) (This project)
-- [Message service ](https://github.com/cccaaannn/zup-message-service)
+- [Message service](https://github.com/cccaaannn/zup-message-service)
+- [K8s configurations](https://github.com/cccaaannn/zup-k8s)
 
 <hr>
 
